@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>何睿 He Rui — AI 产品经理</title>
+<style>
+/* ========== DESIGN TOKENS (from design.md - Miro Style) ========== */
+:root {
+  --brand-yellow: #FFD233; --brand-yellow-deep: #E6BD00;
+  --yellow-light: #FFF8E1; --yellow-dark: #5C4A00;
+  --brand-blue: #4262FF; --blue-pressed: #3B50D8;
+  --brand-coral: #FF6B6B; --coral-light: #FFE8E3; --coral-dark: #8B2E2E;
+  --brand-rose: #FFB8D2; --rose-light: #FFE0EC;
+  --brand-teal: #20C9AC; --teal-light: #DDF5ED; --moss-dark: #1A5C4A;
+  --brand-pink: #FFE0EC; --brand-orange-light: #FFF0E5;
+  --canvas: #FFFFFF; --surface: #F8F8F9; --surface-soft: #F0F0F2;
+  --hairline: #E6E6E8; --hairline-soft: #F0F0F2; --hairline-strong: #D0D0D5;
+  --ink-deep: #050038; --ink: #1A1A2E; --charcoal: #3D3D4A;
+  --slate: #6E6E7A; --steel: #9E9EA8; --stone: #B8B8C0; --muted: #CCCCD4;
+  --on-dark: #FFFFFF; --on-dark-muted: rgba(255,255,255,0.65); --on-primary: #FFFFFF;
+  --success-accent: #00B96B; --brand-red: #FFEBED; --brand-red-dark: #E03E4D;
+  --font-display: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --space-xxs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px;
+  --space-lg: 20px; --space-xl: 24px; --space-xxl: 32px; --space-xxxl: 40px;
+  --space-section: 64px; --space-section-lg: 96px; --space-hero: 120px;
+  --rounded-xs: 4px; --rounded-sm: 6px; --rounded-md: 8px; --rounded-lg: 12px;
+  --rounded-xl: 16px; --rounded-xxl: 20px; --rounded-xxxl: 28px; --rounded-feature: 32px;
+  --rounded-full: 9999px;
+  --shadow-subtle: 0px 1px 2px 0px rgba(5,0,56,0.04);
+  --shadow-card: 0px 4px 12px 0px rgba(5,0,56,0.06);
+  --shadow-mockup: 0px 12px 32px -4px rgba(5,0,56,0.08);
+  --shadow-modal: 0px 16px 48px -8px rgba(5,0,56,0.12);
+}
+
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body); color: var(--ink); background: var(--canvas);
+  line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+
+/* ========== PROMO BANNER ========== */
+.promo-banner {
+  background: var(--ink-deep); color: var(--on-dark); text-align: center;
+  padding: var(--space-sm) var(--space-md); font-size: 14px; font-weight: 500;
+  letter-spacing: -0.01em; position: sticky; top: 0; z-index: 1000;
+}
+.promo-banner .badge-yellow {
+  background: var(--brand-yellow); color: var(--ink-deep);
+  border-radius: var(--rounded-full); padding: 2px 10px;
+  font-size: 12px; font-weight: 600; margin-right: var(--space-xs); display: inline-block;
+}
+
+/* ========== NAVIGATION ========== */
+.nav {
+  position: sticky; top: 40px; z-index: 999;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--hairline); transition: all 0.3s ease;
+}
+.nav.scrolled { box-shadow: var(--shadow-subtle); }
+.nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 var(--space-xxl);
+  height: 64px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: var(--space-xs); text-decoration: none; color: var(--ink-deep); }
+.nav-logo-square { width: 32px; height: 32px; background: var(--brand-yellow); border-radius: var(--rounded-xs); }
+.nav-logo-text { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.02em; }
+.nav-links { display: flex; align-items: center; gap: var(--space-xxl); list-style: none; }
+.nav-links a { text-decoration: none; color: var(--slate); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--ink); }
+.nav-cta { display: flex; align-items: center; gap: var(--space-md); }
+.lang-switch {
+  background: none; border: 1px solid var(--hairline-strong); border-radius: var(--rounded-full);
+  width: 38px; height: 38px; cursor: pointer; font-size: 16px; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s; color: var(--slate);
+}
+.lang-switch:hover { border-color: var(--ink); color: var(--ink); background: var(--surface); }
+.lang-switch .label { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }
+.btn-secondary-outline {
+  background: transparent; color: var(--ink); border: 1px solid var(--hairline-strong);
+  border-radius: var(--rounded-full); padding: 10px 20px; font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none; transition: all 0.2s; font-family: var(--font-body);
+}
+.btn-secondary-outline:hover { border-color: var(--ink); background: var(--surface); }
+.btn-primary {
+  background: var(--ink-deep); color: var(--on-primary); border: none;
+  border-radius: var(--rounded-full); padding: 10px 24px; font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none; transition: all 0.2s; font-family: var(--font-body);
+  display: inline-flex; align-items: center; gap: var(--space-xs);
+}
+.btn-primary:hover { background: var(--charcoal); transform: translateY(-1px); box-shadow: var(--shadow-card); }
+.btn-primary:active { background: var(--slate); transform: translateY(0); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: var(--space-xs); }
+.hamburger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: all 0.3s; }
+
+/* ========== HERO SECTION ========== */
+.hero { padding: var(--space-hero) 0; text-align: center; position: relative; overflow: hidden; }
+.hero-bg-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.particle { position: absolute; border-radius: 50%; opacity: 0.15; animation: floatUp 8s ease-in-out infinite; }
+.particle:nth-child(1) { width: 80px; height: 80px; background: var(--brand-yellow); left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { width: 60px; height: 60px; background: var(--coral-light); left: 25%; animation-delay: 1.5s; }
+.particle:nth-child(3) { width: 100px; height: 100px; background: var(--teal-light); left: 45%; animation-delay: 3s; }
+.particle:nth-child(4) { width: 50px; height: 50px; background: var(--brand-yellow); left: 65%; animation-delay: 4.5s; }
+.particle:nth-child(5) { width: 70px; height: 70px; background: var(--rose-light); left: 80%; animation-delay: 2s; }
+.particle:nth-child(6) { width: 90px; height: 90px; background: var(--brand-teal); left: 35%; animation-delay: 5s; opacity: 0.1; }
+@keyframes floatUp {
+  0% { transform: translateY(400px) scale(0.5); opacity: 0; }
+  30% { opacity: 0.2; }
+  100% { transform: translateY(-200px) scale(1.2); opacity: 0; }
+}
+.hero-inner { max-width: 900px; margin: 0 auto; padding: 0 var(--space-xxl); position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-block; background: var(--yellow-light); color: var(--yellow-dark);
+  font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: var(--rounded-full);
+  margin-bottom: var(--space-xl); letter-spacing: -0.01em;
+}
+.hero-name {
+  font-family: var(--font-display); font-size: 80px; font-weight: 500;
+  line-height: 1.05; letter-spacing: -2px; color: var(--ink-deep); margin-bottom: var(--space-lg);
+}
+.hero-name .highlight { color: var(--brand-yellow-deep); }
+.hero-subtitle { font-size: 18px; font-weight: 400; color: var(--slate); line-height: 1.5; max-width: 600px; margin: 0 auto var(--space-xxl); }
+.hero-actions { display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap; }
+.hero-stats { display: flex; justify-content: center; gap: var(--space-section); margin-top: var(--space-section); padding-top: var(--space-section); border-top: 1px solid var(--hairline); }
+.stat-item { text-align: center; }
+.stat-number { font-family: var(--font-display); font-size: 64px; font-weight: 500; letter-spacing: -1.5px; color: var(--ink-deep); }
+.stat-label { font-size: 14px; color: var(--steel); margin-top: var(--space-xxs); }
+
+/* ========== SECTION COMMON ========== */
+.section { padding: var(--space-section-lg) 0; }
+.section-inner { max-width: 1280px; margin: 0 auto; padding: 0 var(--space-xxl); }
+.section-tag { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: var(--rounded-full); margin-bottom: var(--space-md); letter-spacing: -0.01em; }
+.section-tag.yellow { background: var(--yellow-light); color: var(--yellow-dark); }
+.section-tag.coral { background: var(--coral-light); color: var(--coral-dark); }
+.section-tag.teal { background: var(--teal-light); color: var(--moss-dark); }
+.section-tag.rose { background: var(--rose-light); color: #8B2E4A; }
+.section-tag.blue { background: #F0EEFF; color: var(--brand-blue); }
+.section-title { font-family: var(--font-display); font-size: 48px; font-weight: 500; letter-spacing: -1px; line-height: 1.15; color: var(--ink-deep); margin-bottom: var(--space-md); }
+.section-desc { font-size: 16px; color: var(--slate); max-width: 600px; margin-bottom: var(--space-xxxl); line-height: 1.5; }
+/* Collapsible section header */
+.section-header { display: flex; align-items: baseline; gap: var(--space-sm); cursor: pointer; user-select: none; }
+.section-header:hover .section-title { color: var(--charcoal); }
+.section-collapse-icon { font-size: 24px; color: var(--steel); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; }
+.section-header.collapsed .section-collapse-icon { transform: rotate(-90deg); }
+.section-body { max-height: 20000px; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
+.section-body.collapsed { max-height: 0; opacity: 0; margin-bottom: 0; }
+
+/* ========== ABOUT CARDS ========== */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: var(--space-xxl); }
+.info-card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xxxl); padding: var(--space-xxl); position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+.info-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-mockup); }
+.info-card.yellow { background: var(--brand-yellow); border: none; color: var(--ink-deep); }
+.info-card.coral { background: var(--coral-light); border: none; }
+.info-card.teal { background: var(--teal-light); border: none; }
+.info-card.rose { background: var(--rose-light); border: none; }
+.info-card-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); }
+.info-card-icon { width: 44px; height: 44px; border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.info-card.yellow .info-card-icon { background: rgba(0,0,0,0.08); }
+.info-card.coral .info-card-icon { background: rgba(255,107,107,0.15); }
+.info-card.teal .info-card-icon { background: rgba(32,201,172,0.15); }
+.info-card.rose .info-card-icon { background: rgba(255,184,210,0.3); }
+.info-card-title { font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+.info-card-body { font-size: 15px; line-height: 1.6; color: var(--charcoal); }
+.info-card.yellow .info-card-body { color: var(--ink-deep); }
+.tag-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-md); }
+.tag { background: var(--surface); color: var(--slate); font-size: 13px; font-weight: 500; padding: 5px 12px; border-radius: var(--rounded-full); border: 1px solid var(--hairline); }
+.info-card.yellow .tag { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); color: var(--ink-deep); }
+
+/* ========== TIMELINE ========== */
+.timeline { position: relative; padding-left: 40px; }
+.timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: var(--hairline); }
+.timeline-item { position: relative; margin-bottom: var(--space-xxl); padding-left: var(--space-xxl); }
+.timeline-dot { position: absolute; left: -31px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--canvas); z-index: 1; }
+.timeline-dot.yellow { background: var(--brand-yellow); } .timeline-dot.coral { background: var(--brand-coral); }
+.timeline-dot.teal { background: var(--brand-teal); } .timeline-dot.rose { background: var(--brand-rose); }
+.timeline-card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xxl); padding: var(--space-xxl); cursor: pointer; transition: all 0.3s; position: relative; }
+.timeline-card:hover { box-shadow: var(--shadow-mockup); transform: translateX(4px); }
+.timeline-card.active { border-color: var(--hairline-strong); box-shadow: var(--shadow-card); }
+.timeline-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md); }
+.timeline-company { font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+.timeline-role { font-size: 15px; color: var(--slate); margin-top: var(--space-xxs); }
+.timeline-date { font-size: 13px; color: var(--steel); background: var(--surface); padding: 4px 12px; border-radius: var(--rounded-full); white-space: nowrap; }
+.timeline-badge-row { display: flex; gap: var(--space-xs); margin-top: var(--space-md); flex-wrap: wrap; }
+.timeline-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: var(--rounded-full); }
+.timeline-badge.purple { background: #F0EEFF; color: var(--brand-blue); }
+.timeline-badge.yellow { background: var(--yellow-light); color: var(--yellow-dark); }
+.timeline-badge.coral { background: var(--coral-light); color: var(--coral-dark); }
+.timeline-badge.teal { background: var(--teal-light); color: var(--moss-dark); }
+.timeline-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, margin-top 0.3s ease, opacity 0.3s ease; opacity: 0; }
+.timeline-card.active .timeline-detail { max-height: 800px; opacity: 1; margin-top: var(--space-lg); }
+.timeline-detail-content { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+.timeline-achievement { background: var(--surface); border-radius: var(--rounded-lg); padding: var(--space-md); font-size: 14px; line-height: 1.6; }
+.timeline-achievement strong { display: block; font-size: 13px; color: var(--brand-blue); margin-bottom: var(--space-xxs); text-transform: uppercase; letter-spacing: 0.02em; }
+.timeline-metric { display: inline-block; color: var(--success-accent); font-weight: 600; }
+.timeline-expand-hint { font-size: 13px; color: var(--steel); margin-top: var(--space-sm); display: flex; align-items: center; gap: var(--space-xxs); }
+.timeline-expand-arrow { transition: transform 0.3s; display: inline-block; }
+.timeline-card.active .timeline-expand-arrow { transform: rotate(180deg); }
+
+/* ========== PROJECTS - AI & OTHER CLASSIFICATION ========== */
+.project-category-header {
+  display: flex; align-items: center; gap: var(--space-sm);
+  margin-bottom: var(--space-xl); margin-top: var(--space-xxl);
+}
+.project-category-header:first-of-type { margin-top: 0; }
+.project-category-icon {
+  width: 44px; height: 44px; border-radius: var(--rounded-lg);
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.project-category-icon.ai { background: #F0EEFF; }
+.project-category-icon.other { background: var(--coral-light); }
+.project-category-name {
+  font-family: var(--font-display); font-size: 28px; font-weight: 500;
+  letter-spacing: -0.5px; color: var(--ink-deep);
+}
+.project-category-count {
+  font-size: 13px; font-weight: 600; color: var(--steel);
+  background: var(--surface); padding: 2px 10px; border-radius: var(--rounded-full);
+}
+
+/* Star Card */
+.star-card {
+  background: var(--canvas); border: 1px solid var(--hairline-soft);
+  border-radius: var(--rounded-xxxl); padding: 0; margin-bottom: var(--space-xl);
+  overflow: hidden; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+}
+.star-card:hover { box-shadow: var(--shadow-mockup); transform: translateY(-2px); }
+.star-card-header {
+  padding: var(--space-xxl); display: flex; align-items: flex-start;
+  gap: var(--space-xl); flex-wrap: wrap;
+}
+.star-card-number {
+  font-family: var(--font-display); font-size: 64px; font-weight: 500;
+  line-height: 1; opacity: 0.12; flex-shrink: 0; transition: opacity 0.3s;
+}
+.star-card:hover .star-card-number { opacity: 0.2; }
+.star-card-info { flex: 1; min-width: 280px; }
+.star-card-company { font-family: var(--font-display); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: var(--space-xxs); }
+.star-card-role { font-size: 15px; color: var(--slate); margin-bottom: var(--space-sm); }
+.star-card-arrow { font-size: 24px; color: var(--steel); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; margin-top: var(--space-xs); }
+.star-card.active .star-card-arrow { transform: rotate(180deg); color: var(--ink); }
+
+/* Metrics Bar - Data Dashboard */
+.star-card-metrics-bar { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-sm); }
+.star-card-metric { background: var(--surface-soft); padding: 4px 14px; border-radius: var(--rounded-full); font-size: 13px; font-weight: 600; color: var(--charcoal); transition: all 0.2s; }
+.star-card-metric:hover { background: var(--hairline-soft); }
+.star-card-metric.highlight { background: var(--brand-yellow); color: var(--ink-deep); }
+.star-card-metric.ink { background: var(--ink-deep); color: var(--on-dark); }
+.star-card-metric.success { background: #DEF5EC; color: var(--moss-dark); }
+
+/* Star Body */
+.star-body { max-height: 0; overflow: hidden; transition: max-height 0.65s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s; background: var(--surface); border-top: 1px solid var(--hairline); }
+.star-card.active .star-body { max-height: 1600px; }
+.star-body-inner { padding: var(--space-xxl); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+.star-block { background: var(--canvas); border-radius: var(--rounded-xl); padding: var(--space-xl); border: 1px solid var(--hairline-soft); transition: transform 0.2s, box-shadow 0.2s; }
+.star-block:hover { transform: translateY(-2px); box-shadow: var(--shadow-subtle); }
+.star-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-sm); padding: 2px 10px; border-radius: var(--rounded-full); display: inline-block; }
+.star-block-label.s { background: #FFF0E5; color: #C05600; }
+.star-block-label.t { background: #F0EEFF; color: var(--brand-blue); }
+.star-block-label.a { background: var(--teal-light); color: var(--moss-dark); }
+.star-block-label.r { background: var(--yellow-light); color: var(--yellow-dark); }
+.star-block-content { font-size: 14px; line-height: 1.7; color: var(--charcoal); }
+.star-block-content strong { color: var(--ink); }
+
+/* AI Metric Dashboard */
+.ai-metrics-dashboard {
+  margin-top: var(--space-lg); padding-top: var(--space-lg);
+  border-top: 2px dashed var(--hairline);
+}
+.ai-metrics-title {
+  font-size: 13px; font-weight: 700; color: var(--brand-blue);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-md);
+  display: flex; align-items: center; gap: var(--space-xs);
+}
+.ai-metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-sm);
+}
+.ai-metric-cell {
+  background: var(--canvas); border: 1px solid var(--hairline-soft);
+  border-radius: var(--rounded-lg); padding: var(--space-md); text-align: center;
+  transition: all 0.25s;
+}
+.ai-metric-cell:hover { border-color: var(--brand-blue); box-shadow: var(--shadow-subtle); transform: translateY(-2px); }
+.ai-metric-value { font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--ink-deep); letter-spacing: -0.5px; }
+.ai-metric-value.green { color: var(--success-accent); }
+.ai-metric-value.blue { color: var(--brand-blue); }
+.ai-metric-label { font-size: 12px; color: var(--steel); margin-top: var(--space-xxs); line-height: 1.3; }
+.ai-metric-target { font-size: 11px; color: var(--stone); margin-top: 2px; }
+
+/* Hover tooltip */
+[data-tooltip] { position: relative; cursor: help; }
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip); position: absolute; bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%); background: var(--ink-deep);
+  color: var(--on-dark); font-size: 12px; padding: 4px 10px;
+  border-radius: var(--rounded-sm); white-space: nowrap; z-index: 100;
+  pointer-events: none; font-weight: 400; letter-spacing: 0;
+}
+
+/* ========== VIBE CODING ========== */
+.vibe-section { padding: var(--space-section-lg) 0; background: var(--surface-soft); }
+.vibe-project {
+  position: relative; border-radius: var(--rounded-xxxl); padding: var(--space-xxxl);
+  margin-bottom: var(--space-xxl); transition: all 0.3s;
+}
+.vibe-project:hover { transform: translateY(-2px); box-shadow: var(--shadow-mockup); }
+.vibe-project.yellow { background: linear-gradient(135deg, var(--yellow-light), #FFFDF0); }
+.vibe-project.blue { background: linear-gradient(135deg, #F0EEFF, #FAF8FF); }
+.vibe-project.coral { background: linear-gradient(135deg, var(--coral-light), #FFF5F3); }
+.vibe-project.teal { background: linear-gradient(135deg, var(--teal-light), #F0FAF6); }
+.vibe-project-badge {
+  position: absolute; top: -16px; left: var(--space-xxl);
+  background: var(--ink-deep); color: var(--on-dark);
+  font-family: var(--font-display); font-size: 18px; font-weight: 600;
+  padding: 6px 20px; border-radius: var(--rounded-full);
+  letter-spacing: -0.01em; z-index: 1;
+  display: flex; align-items: center; gap: var(--space-xs);
+}
+.vibe-project-badge .num { color: var(--brand-yellow); }
+/* Adjust project card backgrounds when inside colored wrapper */
+.vibe-project .lf-intro-card,
+.vibe-project .lf-rag-card,
+.vibe-project .lf-recruit-card,
+.vibe-project .lf-research { background: transparent; border: none; box-shadow: none; }
+.vibe-project .lf-intro-card:hover,
+.vibe-project .lf-rag-card:hover,
+.vibe-project .lf-recruit-card:hover,
+.vibe-project .lf-research:hover { box-shadow: none; transform: none; }
+
+/* LearnFlow Overview */
+.lf-overview {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--space-xxl); align-items: start; margin-bottom: var(--space-section);
+}
+.lf-intro-card {
+  background: var(--canvas); border: 1px solid var(--hairline-soft);
+  border-radius: var(--rounded-xxxl); padding: var(--space-xxl);
+  transition: box-shadow 0.3s;
+}
+.lf-intro-card:hover { box-shadow: var(--shadow-mockup); }
+.lf-intro-card h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-intro-card p { font-size: 15px; line-height: 1.8; color: var(--charcoal); margin-bottom: var(--space-md); }
+
+/* Tech Stack */
+.lf-tech-stack { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+.lf-tech-item { background: var(--surface-soft); border-radius: var(--rounded-lg); padding: var(--space-md); transition: all 0.2s; }
+.lf-tech-item:hover { background: var(--canvas); box-shadow: var(--shadow-subtle); }
+.lf-tech-label { font-size: 12px; font-weight: 700; color: var(--brand-blue); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-xxs); }
+.lf-tech-value { font-size: 14px; font-weight: 500; color: var(--ink); }
+
+/* Screenshot Gallery */
+.lf-screenshots { margin-bottom: var(--space-section); }
+.lf-screenshots h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-screenshots .hint { font-size: 14px; color: var(--steel); margin-bottom: var(--space-xl); }
+.lf-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); }
+.lf-screenshot-card { background: var(--canvas); border-radius: var(--rounded-xl); overflow: hidden; border: 1px solid var(--hairline-soft); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.lf-screenshot-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-mockup); border-color: var(--brand-yellow); }
+.lf-screenshot-card:hover .lf-screenshot-label { color: var(--ink); font-weight: 600; }
+.lf-screenshot-img { width: 100%; aspect-ratio: 9/16; object-fit: cover; display: block; background: var(--surface-soft); transition: transform 0.4s; }
+.lf-screenshot-card:hover .lf-screenshot-img { transform: scale(1.03); }
+.lf-screenshot-label { padding: var(--space-sm) var(--space-md); font-size: 13px; font-weight: 500; text-align: center; color: var(--slate); transition: all 0.2s; }
+
+/* Feature Grid */
+.lf-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin-bottom: var(--space-section); }
+.lf-feature-item { text-align: center; padding: var(--space-xl); background: var(--canvas); border-radius: var(--rounded-xxl); border: 1px solid var(--hairline-soft); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; }
+.lf-feature-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-mockup); border-color: var(--hairline-strong); }
+.lf-feature-item:hover .lf-feature-detail { max-height: 120px; opacity: 1; margin-top: var(--space-sm); }
+.lf-feature-icon { width: 56px; height: 56px; border-radius: var(--rounded-xl); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto var(--space-md); transition: transform 0.3s; }
+.lf-feature-item:hover .lf-feature-icon { transform: scale(1.1); }
+.lf-feature-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: var(--space-xs); }
+.lf-feature-desc { font-size: 14px; color: var(--slate); line-height: 1.5; }
+.lf-feature-detail { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease; font-size: 12px; color: var(--charcoal); line-height: 1.7; text-align: left; border-top: 1px solid var(--hairline); padding-top: var(--space-sm); }
+
+/* Version Roadmap */
+.lf-roadmap { overflow-x: auto; margin-bottom: var(--space-section); }
+.lf-roadmap h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-roadmap .hint { font-size: 14px; color: var(--steel); margin-bottom: var(--space-xl); }
+.lf-roadmap-track { display: flex; gap: var(--space-md); min-width: 960px; padding-bottom: var(--space-md); align-items: stretch; }
+.lf-version-card { flex: 1; min-width: 180px; background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xl); padding: var(--space-lg); position: relative; transition: all 0.3s; }
+.lf-version-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-mockup); }
+.lf-version-card.current { border-color: var(--brand-yellow); box-shadow: 0 0 0 3px rgba(255,210,51,0.2); }
+.lf-version-card.current::before { content: 'CURRENT'; position: absolute; top: -10px; right: var(--space-md); background: var(--brand-yellow); color: var(--ink-deep); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: var(--rounded-full); letter-spacing: 0.04em; }
+.lf-version-num { font-family: var(--font-display); font-size: 36px; font-weight: 500; letter-spacing: -1px; color: var(--ink-deep); }
+.lf-version-date { font-size: 12px; color: var(--steel); margin-bottom: var(--space-sm); }
+.lf-version-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--rounded-full); margin-bottom: var(--space-sm); }
+.lf-version-tag.student { background: var(--teal-light); color: var(--moss-dark); }
+.lf-version-tag.work { background: #F0EEFF; color: var(--brand-blue); }
+.lf-version-tag.retention { background: var(--coral-light); color: var(--coral-dark); }
+.lf-version-tag.biz { background: var(--yellow-light); color: var(--yellow-dark); }
+.lf-version-desc { font-size: 13px; line-height: 1.6; color: var(--slate); }
+.lf-version-metric { font-size: 12px; color: var(--success-accent); font-weight: 600; margin-top: var(--space-xs); }
+.lf-roadmap-arrow { display: flex; align-items: center; color: var(--hairline-strong); font-size: 20px; flex-shrink: 0; }
+
+/* RAG Design Section */
+.lf-rag-card {
+  background: var(--canvas); border: 1px solid var(--hairline-soft);
+  border-radius: var(--rounded-xxxl); padding: var(--space-xxxl);
+  margin-bottom: var(--space-section); transition: box-shadow 0.3s;
+}
+.lf-rag-card:hover { box-shadow: var(--shadow-mockup); }
+.lf-rag-card h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-rag-card p { font-size: 15px; line-height: 1.8; color: var(--charcoal); margin-bottom: var(--space-md); }
+.lf-rag-arch { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: var(--space-xl); }
+.lf-rag-block { background: var(--surface); border-radius: var(--rounded-xl); padding: var(--space-xl); border: 1px solid var(--hairline-soft); }
+.lf-rag-block h4 { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-xs); }
+.lf-rag-block ul { list-style: none; padding: 0; }
+.lf-rag-block li { font-size: 14px; color: var(--charcoal); line-height: 1.7; padding: var(--space-xxs) 0; padding-left: var(--space-lg); position: relative; }
+.lf-rag-block li::before { content: '•'; position: absolute; left: 4px; color: var(--brand-blue); font-weight: 700; }
+
+/* Model Comparison */
+.lf-model-compare { margin-bottom: var(--space-section); }
+.lf-model-compare h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-model-compare .hint { font-size: 14px; color: var(--steel); margin-bottom: var(--space-xl); }
+.lf-model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+.lf-model-card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xxl); padding: var(--space-xl); transition: all 0.3s; }
+.lf-model-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-mockup); }
+.lf-model-card .provider { font-family: var(--font-display); font-size: 22px; font-weight: 500; margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-xs); }
+.lf-model-specs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-top: var(--space-md); }
+.lf-model-spec { text-align: center; padding: var(--space-sm); background: var(--surface-soft); border-radius: var(--rounded-md); }
+.lf-model-spec .val { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--ink-deep); }
+.lf-model-spec .lbl { font-size: 11px; color: var(--steel); margin-top: 2px; }
+
+/* Bad Case Analysis */
+.lf-badcase-section { margin-top: var(--space-xxl); padding-top: var(--space-xl); border-top: 2px dashed var(--hairline); }
+.lf-badcase-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+.lf-badcase-header h4 { font-family: var(--font-display); font-size: 18px; font-weight: 500; }
+.lf-badcase-count { font-size: 12px; font-weight: 600; color: var(--steel); background: var(--surface); padding: 2px 10px; border-radius: var(--rounded-full); }
+.lf-badcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+.lf-badcase-card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xl); overflow: hidden; cursor: pointer; transition: all 0.3s; }
+.lf-badcase-card:hover { border-color: var(--hairline-strong); box-shadow: var(--shadow-card); }
+.lf-badcase-summary { padding: var(--space-lg); display: flex; align-items: flex-start; gap: var(--space-md); }
+.lf-badcase-num { width: 36px; height: 36px; border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.lf-badcase-num.offline { background: #F0EEFF; color: var(--brand-blue); }
+.lf-badcase-num.online { background: var(--coral-light); color: var(--coral-dark); }
+.lf-badcase-num.lang { background: var(--teal-light); color: var(--moss-dark); }
+.lf-badcase-meta { flex: 1; min-width: 0; }
+.lf-badcase-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: var(--space-xxs); line-height: 1.4; }
+.lf-badcase-desc { font-size: 13px; color: var(--slate); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lf-badcase-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: var(--rounded-full); margin-top: var(--space-xs); }
+.lf-badcase-tag.offline { background: #F0EEFF; color: var(--brand-blue); }
+.lf-badcase-tag.online { background: var(--coral-light); color: var(--coral-dark); }
+.lf-badcase-tag.lang { background: var(--teal-light); color: var(--moss-dark); }
+.lf-badcase-expand-icon { color: var(--steel); font-size: 20px; transition: transform 0.3s; flex-shrink: 0; margin-top: 4px; }
+.lf-badcase-card.active .lf-badcase-expand-icon { transform: rotate(180deg); }
+.lf-badcase-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; border-top: 1px solid var(--hairline); }
+.lf-badcase-card.active .lf-badcase-detail { max-height: 600px; }
+.lf-badcase-detail-inner { padding: var(--space-lg); }
+.lf-badcase-block { margin-bottom: var(--space-md); }
+.lf-badcase-block:last-child { margin-bottom: 0; }
+.lf-badcase-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-xxs); padding: 2px 10px; border-radius: var(--rounded-full); display: inline-block; }
+.lf-badcase-block-label.problem { background: #FFEBED; color: var(--brand-red-dark); }
+.lf-badcase-block-label.rootcause { background: #FFF0E5; color: #C05600; }
+.lf-badcase-block-label.solution { background: #DEF5EC; color: var(--moss-dark); }
+.lf-badcase-block-content { font-size: 13px; line-height: 1.7; color: var(--charcoal); }
+.lf-badcase-block-content em { color: var(--brand-red-dark); font-style: normal; font-weight: 500; }
+
+/* Recruit Plan App */
+.lf-recruit-card {
+  background: linear-gradient(135deg, #F0EEFF, var(--rose-light));
+  border-radius: var(--rounded-xxxl); padding: var(--space-xxxl);
+  margin-bottom: var(--space-section); transition: all 0.3s;
+}
+.lf-recruit-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-mockup); }
+.lf-recruit-card h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-recruit-card p { font-size: 15px; line-height: 1.8; color: var(--charcoal); margin-bottom: var(--space-md); }
+
+/* Research Card */
+.lf-research {
+  background: var(--canvas); border: 1px solid var(--hairline-soft);
+  border-radius: var(--rounded-xxxl); padding: var(--space-xxxl);
+  margin-top: var(--space-section); transition: box-shadow 0.3s;
+}
+.lf-research:hover { box-shadow: var(--shadow-mockup); }
+.lf-research h3 { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: var(--space-md); }
+.lf-research p { font-size: 15px; color: var(--charcoal); line-height: 1.8; margin-bottom: var(--space-md); }
+.lf-research-methods { display: flex; gap: var(--space-xxl); margin-top: var(--space-xl); flex-wrap: wrap; }
+.lf-research-method { flex: 1; min-width: 180px; text-align: center; }
+.lf-research-method .num { font-family: var(--font-display); font-size: 48px; font-weight: 500; color: var(--ink-deep); }
+.lf-research-method .label { font-size: 13px; color: var(--steel); margin-top: var(--space-xxs); }
+
+/* ========== SKILLS ========== */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-xl); }
+.skill-category { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--rounded-xxl); padding: var(--space-xl); transition: all 0.3s; }
+.skill-category:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
+.skill-cat-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs); }
+.skill-cat-icon { width: 36px; height: 36px; border-radius: var(--rounded-md); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.skill-tag { background: var(--surface); padding: 6px 14px; border-radius: var(--rounded-full); font-size: 13px; font-weight: 500; color: var(--charcoal); border: 1px solid var(--hairline); transition: all 0.25s; cursor: default; }
+.skill-tag:hover { border-color: var(--ink); background: var(--canvas); transform: translateY(-1px); }
+.skill-tag.highlight { background: var(--yellow-light); border-color: var(--brand-yellow); color: var(--yellow-dark); }
+
+/* ========== AWARDS ========== */
+.awards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-md); }
+.award-card { background: var(--surface); border-radius: var(--rounded-xl); padding: var(--space-lg); display: flex; align-items: center; gap: var(--space-md); border: 1px solid var(--hairline-soft); transition: all 0.25s; cursor: default; }
+.award-card:hover { background: var(--canvas); box-shadow: var(--shadow-card); transform: translateY(-2px); }
+.award-icon { width: 44px; height: 44px; border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.award-icon.gold { background: var(--yellow-light); } .award-icon.blue { background: #F0EEFF; }
+.award-info { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.award-level { font-size: 12px; color: var(--steel); margin-top: 2px; }
+
+/* ========== CTA BANNER ========== */
+.cta-banner {
+  background: var(--ink-deep); border-radius: var(--rounded-feature);
+  padding: var(--space-section); text-align: center;
+  margin: 0 var(--space-xxl); max-width: 1280px; margin-left: auto; margin-right: auto;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(255,210,51,0.15), transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(66,98,255,0.1), transparent 50%);
+}
+.cta-content { position: relative; z-index: 1; }
+.cta-title { font-family: var(--font-display); font-size: 48px; font-weight: 500; letter-spacing: -1px; color: var(--on-dark); margin-bottom: var(--space-md); }
+.cta-desc { font-size: 16px; color: var(--on-dark-muted); margin-bottom: var(--space-xxl); }
+.cta-buttons { display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap; }
+.btn-on-dark { background: var(--on-dark); color: var(--ink-deep); border: none; border-radius: var(--rounded-full); padding: 12px 24px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); text-decoration: none; display: inline-block; }
+.btn-on-dark:hover { background: var(--brand-yellow); transform: translateY(-1px); }
+
+/* ========== FOOTER ========== */
+.footer { background: var(--ink-deep); color: var(--on-dark-muted); padding: var(--space-section) var(--space-xxl); margin-top: var(--space-section-lg); }
+.footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--space-xxxl); }
+.footer-brand-text { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--on-dark); margin-bottom: var(--space-sm); }
+.footer-desc { font-size: 14px; line-height: 1.6; }
+.footer-col-title { font-size: 14px; font-weight: 500; color: var(--on-dark); margin-bottom: var(--space-md); letter-spacing: -0.01em; }
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: var(--space-xs); }
+.footer-links a { text-decoration: none; color: var(--on-dark-muted); font-size: 13px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--brand-yellow); }
+.footer-bottom { max-width: 1280px; margin: var(--space-xxxl) auto 0; padding-top: var(--space-xl); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md); font-size: 12px; }
+
+/* ========== BACK TO TOP ========== */
+.back-to-top { position: fixed; bottom: var(--space-xxl); right: var(--space-xxl); width: 44px; height: 44px; background: var(--ink-deep); color: var(--on-dark); border: none; border-radius: var(--rounded-full); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: all 0.3s; z-index: 50; }
+.back-to-top.visible { opacity: 1; transform: translateY(0); }
+.back-to-top:hover { background: var(--charcoal); transform: translateY(-2px); }
+
+/* ========== ANIMATIONS ========== */
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  :root { --space-hero: 80px; --space-section-lg: 64px; }
+  .hero-name { font-size: 64px; } .section-title { font-size: 36px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .lf-overview { grid-template-columns: 1fr; }
+  .lf-features-grid { grid-template-columns: 1fr 1fr; }
+  .lf-model-grid { grid-template-columns: 1fr; }
+  .lf-rag-arch { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .timeline-detail-content { grid-template-columns: 1fr; }
+  .star-body-inner { grid-template-columns: 1fr; }
+  .hero-stats { gap: var(--space-xxxl); }
+  .ai-metrics-grid { grid-template-columns: repeat(3, 1fr); }
+  .lf-badcase-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; } .hamburger { display: flex; }
+  .hero-name { font-size: 48px; letter-spacing: -1px; }
+  .section-title { font-size: 28px; }
+  .stat-number { font-size: 48px; }
+  .hero-stats { gap: var(--space-xl); flex-wrap: wrap; }
+  .lf-features-grid { grid-template-columns: 1fr; }
+  .lf-tech-stack { grid-template-columns: 1fr; }
+  .lf-gallery { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr; }
+  .cta-title { font-size: 32px; }
+  .ai-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .hero-name { font-size: 36px; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .cta-banner { border-radius: var(--rounded-xl); padding: var(--space-xxxl); }
+  .ai-metrics-grid { grid-template-columns: 1fr; }
+  .lf-gallery { grid-template-columns: 1fr; }
+  .lf-model-grid { grid-template-columns: 1fr; }
+}
+
+/* Mobile nav */
+.mobile-nav { display: none; position: fixed; inset: 0; background: var(--canvas); z-index: 998; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-xxl); }
+.mobile-nav.open { display: flex; }
+.mobile-nav a { text-decoration: none; font-size: 22px; font-weight: 500; color: var(--ink); font-family: var(--font-display); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Promo Banner -->
+<div class="promo-banner">
+  <span class="badge-yellow" data-zh="OPEN TO WORK" data-en="OPEN TO WORK">OPEN TO WORK</span>
+  2027 届应届毕业生 · AI 产品方向 · 随时入职
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-square"></div>
+      <span class="nav-logo-text">He Rui</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about" data-zh="关于我" data-en="About">关于我</a></li>
+      <li><a href="#experience" data-zh="实习经历" data-en="Experience">实习经历</a></li>
+      <li><a href="#projects" data-zh="核心项目" data-en="Projects">核心项目</a></li>
+      <li><a href="#vibe-coding" data-zh="Vibe Coding" data-en="Vibe Coding">Vibe Coding</a></li>
+      <li><a href="#skills" data-zh="荣誉奖项" data-en="Awards">荣誉奖项</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="lang-switch" id="langSwitch" title="Switch Language" onclick="toggleLang()"><span class="label">中</span></button>
+      <a href="mailto:971117427@qq.com" class="btn-secondary-outline" data-zh="联系我" data-en="Contact">联系我</a>
+      <a href="#cta" class="btn-primary" data-zh="获取简历 ↓" data-en="Resume ↓">获取简历 ↓</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#about" onclick="closeMobileNav()" data-zh="关于我" data-en="About">关于我</a>
+  <a href="#experience" onclick="closeMobileNav()" data-zh="实习经历" data-en="Experience">实习经历</a>
+  <a href="#projects" onclick="closeMobileNav()" data-zh="核心项目" data-en="Projects">核心项目</a>
+  <a href="#vibe-coding" onclick="closeMobileNav()" data-zh="Vibe Coding" data-en="Vibe Coding">Vibe Coding</a>
+  <a href="#skills" onclick="closeMobileNav()" data-zh="技能荣誉" data-en="Skills &amp; Honors">技能荣誉</a>
+  <a href="mailto:971117427@qq.com" class="btn-primary" data-zh="联系我" data-en="Contact">联系我</a>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg-particles">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge" data-zh="HKU AI & Society M.Sc. | ECUST Public Admin Top 3%" data-en="HKU AI & Society M.Sc. | ECUST Public Admin Top 3%">HKU AI & Society M.Sc. | ECUST Public Admin Top 3%</div>
+    <h1 class="hero-name fade-in">何睿 <span class="highlight">He Rui</span></h1>
+    <p class="hero-subtitle fade-in" data-zh="求职方向：AI 产品经理<br>实习：腾讯 / 趋动科技 / 上海 AI 实验室" data-en="Role: AI Product Manager<br>Internships: Tencent / VirtAI / Shanghai AI Lab">
+      求职方向：AI 产品经理<br>
+      实习：腾讯 / 趋动科技 / 上海 AI 实验室实习经历
+    </p>
+    <div class="hero-actions fade-in">
+      <a href="#projects" class="btn-primary"><span>查看项目</span><span style="font-size:16px">↓</span></a>
+      <a href="mailto:971117427@qq.com" class="btn-secondary-outline">联系我</a>
+    </div>
+    <div class="hero-stats fade-in">
+      <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">段实习经历</div></div>
+      <div class="stat-item"><div class="stat-number">7</div><div class="stat-label">核心项目</div></div>
+      <div class="stat-item"><div class="stat-number">10+</div><div class="stat-label">个人奖项</div></div>
+      <div class="stat-item"><div class="stat-number">3</div><div class="stat-label">Vibe Coding 项目</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ABOUT ==================== -->
+<section class="section" id="about" style="padding-top:var(--space-xxl);">
+  <div class="section-inner">
+    <span class="section-tag yellow">ABOUT</span>
+    <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title fade-in" data-zh="关于我" data-en="About Me">关于我</h2>
+    <span class="section-collapse-icon">⌄</span>
+    </div>
+    <p class="section-desc fade-in" data-zh="ENFJ · 责任感驱动 · AI 原生代产品人" data-en="ENFJ · Responsibility-driven · AI-native Product Talent">ENFJ · 责任感驱动 · AI 原生代产品人</p>
+    <div class="section-body">
+    <div class="about-grid">
+      <div class="info-card yellow fade-in">
+        <div class="info-card-header"><div class="info-card-icon">🎓</div><div><div class="info-card-title">教育背景</div></div></div>
+        <div class="info-card-body">
+          <strong>香港大学</strong> — AI, Ethics and Society 硕士<br>
+          <strong>华东理工大学</strong> — 公共管理 本科（专业前 3%）<br>
+          <strong>辅修</strong> — 牛津大学 AI & Finance 课程<br>
+          <strong>核心课程</strong> — 人工智能、数据与算法基础、计算社会科学
+        </div>
+      </div>
+      <div class="info-card coral fade-in">
+        <div class="info-card-header"><div class="info-card-icon">💡</div><div><div class="info-card-title">产品兴趣</div></div></div>
+        <div class="info-card-body">AI 产品（开发平台、大模型应用）、云计算（PaaS、SaaS）、智能体、AI Coding</div>
+        <div class="tag-list">
+          <span class="tag">AI 产品</span><span class="tag">大模型应用</span><span class="tag">智能体</span>
+          <span class="tag">AI Coding</span><span class="tag">PaaS/SaaS</span><span class="tag">开源生态</span>
+        </div>
+      </div>
+      <div class="info-card teal fade-in">
+        <div class="info-card-header"><div class="info-card-icon">🛠</div><div><div class="info-card-title">工具与方法</div></div></div>
+        <div class="info-card-body">问题拆解 · A/B 测试 · 埋点设计 · 需求优先级管理 · 竞品分析 · 用户研究</div>
+        <div class="tag-list">
+          <span class="tag">Axure</span><span class="tag">Figma</span><span class="tag">Trae</span><span class="tag">Dify</span>
+          <span class="tag">Stata</span><span class="tag">SPSS</span><span class="tag">SQL</span>
+          <span class="tag">AI Coding</span><span class="tag">LLM 应用</span><span class="tag">RAG</span><span class="tag">Agent</span>
+          <span class="tag">React Native</span><span class="tag">SOP 搭建</span>
+        </div>
+      </div>
+      <div class="info-card rose fade-in">
+        <div class="info-card-header"><div class="info-card-icon">🌐</div><div><div class="info-card-title">英语能力</div></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="text-align:center;padding:12px;background:var(--canvas);border-radius:var(--rounded-lg);">
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:500;">600+</div>
+            <div style="font-size:13px;color:var(--steel);">CET-4 / CET-6</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--canvas);border-radius:var(--rounded-lg);">
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:500;">7.5</div>
+            <div style="font-size:13px;color:var(--steel);">IELTS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EXPERIENCE ==================== -->
+<section class="section" id="experience" style="background:var(--surface-soft);">
+  <div class="section-inner">
+    <span class="section-tag coral">EXPERIENCE</span>
+    <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title fade-in" data-zh="实习经历" data-en="Experience">实习经历</h2>
+    <span class="section-collapse-icon">⌄</span>
+    </div>
+    <div class="section-body">
+    <p class="section-desc fade-in">从运营到产品 — 四段实习，逐层深入 AI 产品核心</p>
+    <div class="timeline">
+      <!-- Tencent -->
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot yellow"></div>
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">腾讯计算机系统有限公司</div>
+              <div class="timeline-role">AI 产品实习生 · 海外刷掌支付算法与业务平台</div>
+            </div>
+            <div class="timeline-date">2025/09 — 2026/02</div>
+          </div>
+          <div class="timeline-badge-row">
+            <span class="timeline-badge purple">AI 产品</span>
+            <span class="timeline-badge yellow">需求设计</span>
+            <span class="timeline-badge teal">国际化</span>
+            <span class="timeline-badge coral">RAG + Agent</span>
+          </div>
+          <div class="timeline-expand-hint">点击展开详情 <span class="timeline-expand-arrow">↓</span></div>
+          <div class="timeline-detail">
+            <div class="timeline-detail-content">
+              <div class="timeline-achievement"><strong>Palm2.0 双掌识别</strong>用户流程→技术接口→算法逻辑三层拆解，千人封闭场景<span class="timeline-metric">识别速度 +60%</span>，全场景<span class="timeline-metric">响应 -0.15s</span></div>
+              <div class="timeline-achievement"><strong>海外独立站 0-1</strong>重启搁置 3 个月的官网项目，<span class="timeline-metric">1 个月内上线</span>，分层留资体系使留资率<span class="timeline-metric">提升 14%</span></div>
+              <div class="timeline-achievement"><strong>智能客服 RAG+Agent</strong>向量知识库 + 意图识别 + 任务分流，智能应答准确率<span class="timeline-metric">≥90%</span>，<span class="timeline-metric">7×24 在线</span></div>
+              <div class="timeline-achievement"><strong>文档体系重构</strong>迁移至腾讯写写，搭建更新管理系统，<span class="timeline-metric">减少 5 人日耗时</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 趋动科技 -->
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot coral"></div>
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">北京趋动科技有限公司</div>
+              <div class="timeline-role">AI 产品实习生 · AI 开发训练平台趋动云</div>
+            </div>
+            <div class="timeline-date">2025/07 — 2025/09</div>
+          </div>
+          <div class="timeline-badge-row">
+            <span class="timeline-badge purple">AI 产品</span>
+            <span class="timeline-badge coral">用户增长</span>
+            <span class="timeline-badge teal">商业化</span>
+          </div>
+          <div class="timeline-expand-hint">点击展开详情 <span class="timeline-expand-arrow">↓</span></div>
+          <div class="timeline-detail">
+            <div class="timeline-detail-content">
+              <div class="timeline-achievement"><strong>临时镜像功能</strong>分析 200+ 社区反馈，主导"临时镜像"（支持中断续训），<span class="timeline-metric">重建耗时 -40%</span>，使用频率达 30%</div>
+              <div class="timeline-achievement"><strong>流程优化</strong>跑通猫狗模型训练/部署全流程，重构导航栏动线，新用户首次项目时间<span class="timeline-metric">缩短 25%</span>，满意度<span class="timeline-metric">+20%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- AI Lab -->
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot teal"></div>
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">上海市人工智能创新中心 (AI Lab)</div>
+              <div class="timeline-role">AI 产品运营 · DeepLink 人工智能框架平台</div>
+            </div>
+            <div class="timeline-date">2024/06 — 2024/10</div>
+          </div>
+          <div class="timeline-badge-row">
+            <span class="timeline-badge purple">产品运营</span>
+            <span class="timeline-badge teal">生态建设</span>
+            <span class="timeline-badge yellow">A/B 测试</span>
+          </div>
+          <div class="timeline-expand-hint">点击展开详情 <span class="timeline-expand-arrow">↓</span></div>
+          <div class="timeline-detail">
+            <div class="timeline-detail-content">
+              <div class="timeline-achievement"><strong>官网体验升级</strong>竞品分析 5 家 + A/B 测试 + 四层设计，滚动深度<span class="timeline-metric">40%→67%</span>，底部到达率<span class="timeline-metric">10%→35%</span></div>
+              <div class="timeline-achievement"><strong>生态体系构建</strong>三级合作伙伴认证体系，引入软硬件厂商合作，超额完成年度伙伴拉新计划</div>
+              <div class="timeline-achievement"><strong>运营提效</strong>Dify 多 Agent 数据问答系统，单篇交付周期<span class="timeline-metric">缩短 57%</span>，粉丝上涨 1000+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 游仁 -->
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot rose"></div>
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">游仁信息科技（上海）有限公司</div>
+              <div class="timeline-role">产品运营 · 快消品牌数字化运营</div>
+            </div>
+            <div class="timeline-date">2024/01 — 2024/03</div>
+          </div>
+          <div class="timeline-badge-row">
+            <span class="timeline-badge rose">产品运营</span>
+            <span class="timeline-badge yellow">用户增长</span>
+          </div>
+          <div class="timeline-expand-hint">点击展开详情 <span class="timeline-expand-arrow">↓</span></div>
+          <div class="timeline-detail">
+            <div class="timeline-detail-content">
+              <div class="timeline-achievement"><strong>数字化运营</strong>深度访谈识别地推痛点，设计企微数字化集客与培育链路，标准化 SOP，转化率<span class="timeline-metric">+20%</span></div>
+              <div class="timeline-achievement"><strong>品牌矩阵</strong>服务养乐多、好侍、NITORI、苏菲等品牌，沉淀可复用的快消品运营指南</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CORE PROJECTS ==================== -->
+<section class="section" id="projects">
+  <div class="section-inner">
+    <span class="section-tag teal">PROJECTS</span>
+    <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title fade-in" data-zh="核心项目" data-en="Core Projects">核心项目</h2>
+    <span class="section-collapse-icon">⌄</span>
+    </div>
+    <div class="section-body">
+    <p class="section-desc fade-in">按赛道分类 · STAR 法则拆解 · 数据指标体系驱动</p>
+
+    <!-- ====== AI 项目 ====== -->
+    <div class="project-category-header fade-in">
+      <div class="project-category-icon ai">🤖</div>
+      <div class="project-category-name">AI 项目</div>
+      <div class="project-category-count">3 个项目</div>
+    </div>
+
+    <!-- Project 1: 智能客服 RAG+Agent -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">01</div>
+        <div class="star-card-info">
+          <div class="star-card-company">刷掌官网智能客服落地与优化</div>
+          <div class="star-card-role">腾讯 · AI 产品实习生 · 海外官网智能客服</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="10条对话内找到答案">10 轮内解决率 ≥85%</span>
+            <span class="star-card-metric success" data-tooltip="混元大模型 + RAG 知识库">应答准确率 >90%</span>
+            <span class="star-card-metric" data-tooltip="B 端企业：房地产/医院/体育场馆">满意度 >4.5/5</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">业务团队<strong>刚组建一年尚无独立官网</strong>，销售急需高质量海外线索。官网面向 B 端企业（房地产、医院、体育场馆等）提供支付/通行/考勤服务，团队需要一个能承接流量并转化线索的广告页。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content"><strong>0-1 牵头搭建官网</strong>，针对不同客户设计用户旅程与分层 CTA，提升留资效率与质量。核心 AI 功能——导师带着 0-1 搭建<strong>知识库 + 混元大模型驱动的智能客服模块</strong>，架构为意图识别 + 轻量 Agent 调度 + RAG 增强检索，<strong>目标：10 条对话内找到答案</strong>。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content">
+              <strong>数据层</strong>：负责数据库数据清洗、文档切片、向量化入库。<br>
+              <strong>AI 模块设计</strong>：RAG 检索增强生成 + 意图识别 + 记忆机制设计。<br>
+              <strong>意图识别四层机制</strong>：① 明确意图 → 直接进入 RAG/Agent/功能调用；② 模糊意图（置信度 0.3-0.6）→ 主动提问 1-2 个澄清性问题，结合上下文重新识别；③ 仍模糊 → 长记忆检索 + 关键词匹配 + 兜底引导；④ 清晰后执行对应功能。<br>
+              <strong>示例</strong>：用户问"刷掌支付怎么用？"——模糊点在于想问操作还是接入，客服反问"您是普通用户想了解支付操作，还是商户想了解接入流程？"<br>
+              <strong>效果评测</strong>：上线前由产品/营销/测试/开发多方打分汇总；上线后每次知识库更新或 Prompt 修改自动跑离线评测。
+            </div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">问题解决率 <strong>≥85%</strong>（10 轮对话内），应答准确率 <strong>>90%</strong>，用户满意度 <strong>>4.5/5</strong>。官网成为海外线索获取核心引擎。</div>
+          </div>
+        </div>
+        <!-- Architecture Flow -->
+        <div style="padding:0 var(--space-xxl);margin-bottom:var(--space-lg);">
+          <div style="border-top:2px dashed var(--hairline);padding-top:var(--space-lg);">
+            <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:var(--space-md);display:flex;align-items:center;gap:var(--space-xs);">🏗️ 系统架构</div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-xxs);align-items:center;font-size:13px;line-height:1.5;">
+              <!-- Layer 0: User -->
+              <div style="background:var(--brand-red);color:var(--charcoal);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;">用户层 · 多语言 / 多时区 / 碎片化咨询</div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 1: Access -->
+              <div style="background:var(--yellow-light);color:var(--ink);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;">接入层 · 7×24h 在线 · Web / App / IM</div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 2: Intent -->
+              <div style="background:#F0EEFF;color:var(--ink);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;">意图识别层 · 语义向量优先 + 模糊引导 + 记忆兜底</div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 3: Agent Dispatch -->
+              <div style="background:var(--coral-light);color:var(--ink);padding:var(--space-md) var(--space-xl);border-radius:var(--rounded-xl);font-weight:600;font-size:14px;width:100%;max-width:600px;text-align:center;">
+                调度层 · 轻量级 Agent
+                <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-sm);font-weight:400;font-size:12px;justify-content:center;flex-wrap:wrap;">
+                  <span style="background:var(--canvas);padding:var(--space-xs) var(--space-sm);border-radius:var(--rounded-full);">标准化问答 → RAG 检索 + 生成</span>
+                  <span style="background:var(--canvas);padding:var(--space-xs) var(--space-sm);border-radius:var(--rounded-full);">复杂多轮 → 上下文记忆 + 逐步引导</span>
+                  <span style="background:var(--canvas);padding:var(--space-xs) var(--space-sm);border-radius:var(--rounded-full);">无法解决 → 人工转接 / 留资联动</span>
+                </div>
+              </div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 4: Knowledge -->
+              <div style="background:var(--teal-light);color:var(--ink);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;">知识层 · 向量数据库 + 长期记忆 + 10 轮短期记忆</div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 5: Output -->
+              <div style="background:var(--surface);color:var(--ink);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;border:2px solid var(--hairline-strong);">输出层 · 安全过滤 + 多语言适配 + 合规校验</div>
+              <div style="color:var(--steel);font-size:20px;">↓</div>
+              <!-- Layer 6: Eval -->
+              <div style="background:var(--ink-deep);color:var(--on-dark);padding:var(--space-sm) var(--space-xl);border-radius:var(--rounded-full);font-weight:600;font-size:14px;">评测闭环 · 离线评测 + 在线灰度 + 人工抽检</div>
+            </div>
+          </div>
+        </div>
+        <!-- Bad Cases inside star card -->
+        <div style="padding:0 var(--space-xxl);margin-bottom:var(--space-lg);">
+          <div style="border-top:2px dashed var(--hairline);padding-top:var(--space-lg);">
+            <div class="lf-badcase-header" style="margin-bottom:var(--space-md);">
+              <h4 style="font-family:var(--font-display);font-size:16px;font-weight:500;">🔬 Bad Case 复盘</h4>
+              <span class="lf-badcase-count">4 个典型案例</span>
+            </div>
+            <div class="lf-badcase-grid">
+              <div class="lf-badcase-card" onclick="event.stopPropagation();this.classList.toggle('active')">
+                <div class="lf-badcase-summary"><div class="lf-badcase-num offline">1</div><div class="lf-badcase-meta"><div class="lf-badcase-title">知识库缺失·无法回答</div><div class="lf-badcase-desc">日本合规进度未入库</div><span class="lf-badcase-tag offline">离线评测</span></div><div class="lf-badcase-expand-icon">⌄</div></div>
+                <div class="lf-badcase-detail"><div class="lf-badcase-detail-inner">
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label problem">问题现象</span><div class="lf-badcase-block-content">用户问：<em>"日本合规认证进度？"</em> → 系统："抱歉，未找到相关信息。"</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label rootcause">根因</span><div class="lf-badcase-block-content">日本内部进度文档未上传，切片漏掉项目周报"PPC预审阶段"一句话。</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label solution">方案</span><div class="lf-badcase-block-content">补全知识库 + 待补充监控 + "部分知晓"兜底引导留资。</div></div>
+                </div></div>
+              </div>
+              <div class="lf-badcase-card" onclick="event.stopPropagation();this.classList.toggle('active')">
+                <div class="lf-badcase-summary"><div class="lf-badcase-num online">2</div><div class="lf-badcase-meta"><div class="lf-badcase-title">生成幻觉·捏造功能</div><div class="lf-badcase-desc">Apple Watch功能不存在</div><span class="lf-badcase-tag online">在线评测</span></div><div class="lf-badcase-expand-icon">⌄</div></div>
+                <div class="lf-badcase-detail"><div class="lf-badcase-detail-inner">
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label problem">问题现象</span><div class="lf-badcase-block-content">问：<em>"Apple Watch上可用吗？"</em> → 答：<em>"可以安装App，抬手支付。"</em>（实际未上线）</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label rootcause">根因</span><div class="lf-badcase-block-content">Temperature 0.7 偏高，模型从"iOS支持"泛化编造了Apple Watch细节。</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label solution">方案</span><div class="lf-badcase-block-content">Temperature→0.3 + 事实性校验层 + 补充反例知识（不支持设备列表）。</div></div>
+                </div></div>
+              </div>
+              <div class="lf-badcase-card" onclick="event.stopPropagation();this.classList.toggle('active')">
+                <div class="lf-badcase-summary"><div class="lf-badcase-num online">3</div><div class="lf-badcase-meta"><div class="lf-badcase-title">意图识别错误</div><div class="lf-badcase-desc">合作意向→技术支持</div><span class="lf-badcase-tag online">在线评测</span></div><div class="lf-badcase-expand-icon">⌄</div></div>
+                <div class="lf-badcase-detail"><div class="lf-badcase-detail-inner">
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label problem">问题现象</span><div class="lf-badcase-block-content">印尼连锁店：<em>"想批量引入，如何洽谈？"</em> → 系统答：<em>"请下载商家端App…"</em></div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label rootcause">根因</span><div class="lf-badcase-block-content">合作/商务类训练样本不足，"批量引入""洽谈"未被关键词规则覆盖。</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label solution">方案</span><div class="lf-badcase-block-content">扩充500+合作意图训练集 + 置信度<0.8前置反问 + 合作意图直接触发留资。</div></div>
+                </div></div>
+              </div>
+              <div class="lf-badcase-card" onclick="event.stopPropagation();this.classList.toggle('active')">
+                <div class="lf-badcase-summary"><div class="lf-badcase-num lang">4</div><div class="lf-badcase-meta"><div class="lf-badcase-title">多语言翻译不一致</div><div class="lf-badcase-desc">日语术语混用·非标准</div><span class="lf-badcase-tag lang">离线·日语</span></div><div class="lf-badcase-expand-icon">⌄</div></div>
+                <div class="lf-badcase-detail"><div class="lf-badcase-detail-inner">
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label problem">问题现象</span><div class="lf-badcase-block-content">"手のひら認証"与"パームプリント"混用，"误识率"错译为非标准的「誤識率」。</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label rootcause">根因</span><div class="lf-badcase-block-content">通用神经翻译未注入行业术语表，不同文档译法未归一化。</div></div>
+                  <div class="lf-badcase-block"><span class="lf-badcase-block-label solution">方案</span><div class="lf-badcase-block-content">建立多语言术语表 + 术语强制替换 + Top 100 术语专家校对。</div></div>
+                </div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Metrics Dashboard -->
+        <div class="ai-metrics-dashboard" style="padding:0 var(--space-xxl) var(--space-xxl);">
+          <div class="ai-metrics-title">📊 数据指标体系</div>
+          <div class="ai-metrics-grid">
+            <div class="ai-metric-cell"><div class="ai-metric-value green">≥90%</div><div class="ai-metric-label">智能应答准确率</div><div class="ai-metric-target">目标≥90%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">≥85%</div><div class="ai-metric-label">问题解决率</div><div class="ai-metric-target">目标≥85%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">≤1s</div><div class="ai-metric-label">平均响应时延</div><div class="ai-metric-target">目标≤1s</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value blue">≤15%</div><div class="ai-metric-label">人工转接率</div><div class="ai-metric-target">目标≤15%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value blue">100%</div><div class="ai-metric-label">7×24 小时在线率</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">≥12%</div><div class="ai-metric-label">咨询留资转化率</div><div class="ai-metric-target">目标≥12%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">1000+</div><div class="ai-metric-label">评测话术覆盖</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">≥4.8/5</div><div class="ai-metric-label">用户满意度</div><div class="ai-metric-target">目标≥4.8</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2: Palm2.0 -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">02</div>
+        <div class="star-card-info">
+          <div class="star-card-company">Palm2.0 双掌识别需求落地</div>
+          <div class="star-card-role">腾讯 · AI 产品 · 算法优化方向</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="千人封闭场景本地小库识别">识别速度 +60%</span>
+            <span class="star-card-metric success" data-tooltip="全场景平均响应优化">响应 -0.15s</span>
+            <span class="star-card-metric">5 核心接口</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">SaaS 平台限制单用户 ID 仅绑定单一手掌，与底层 PaaS 双掌识别算法能力<strong>严重脱节</strong>。80% 以上购买 PaaS 的客户无法完整使用双掌功能，企业面临一人多户的数据管理难题。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">打通 PaaS 到 SaaS 的双掌识别全链路，完成注册、核验、管理三大场景的技术升级与流程重构，保障<strong>识别速度不降级</strong>。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content"><strong>场景层</strong>：梳理全端流程，明确 3 类录入场景与冲突处理机制。<br><strong>技术层</strong>：设计 5 大核心接口（注册/核验/删除/查询/合并），明确数据结构。<br><strong>算法层</strong>：分场景定制检索策略——千人以內本地小库识别，万人开放场景端云协同。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">千人封闭场景<strong>识别速度提升 60%</strong>，万人开放场景延迟控制在 500ms 内，全场景平均响应减少 0.15s。持续监控功能落地数据与边缘 case。</div>
+          </div>
+        </div>
+        <!-- AI Metrics Dashboard -->
+        <div class="ai-metrics-dashboard" style="padding:0 var(--space-xxl) var(--space-xxl);">
+          <div class="ai-metrics-title">📊 数据指标体系</div>
+          <div class="ai-metrics-grid">
+            <div class="ai-metric-cell"><div class="ai-metric-value green">+60%</div><div class="ai-metric-label">千人场景识别速度</div><div class="ai-metric-target">目标≥50%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">-0.15s</div><div class="ai-metric-label">全场景平均响应</div><div class="ai-metric-target">目标≤500ms</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">5</div><div class="ai-metric-label">核心接口数量</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">3</div><div class="ai-metric-label">录入场景覆盖</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value blue">100%</div><div class="ai-metric-label">兼容现有单掌用户</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 3: AI Lab 数据监控 Agent -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">03</div>
+        <div class="star-card-info">
+          <div class="star-card-company">新媒体运营数据监控与分析 Agent</div>
+          <div class="star-card-role">上海 AI 实验室 · AI 产品运营 · Agent 搭建方向</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="Dify 工作流 + 外挂业务知识库">Dify Agent 搭建</span>
+            <span class="star-card-metric success" data-tooltip="公司离线数据库 API 驱动">数据库 API 对接</span>
+            <span class="star-card-metric" data-tooltip="美团 Nokia + Dify 前端">Nokia 前端搭建</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">AI Lab 新媒体运营团队<strong>缺乏统一的数据监控与分析工具</strong>，运营数据分散在公司内部数据库中，人工查询和分析效率低下，需要一套自动化 Agent 实现数据看板监控与智能分析。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">基于真实业务需求，从 0 搭建<strong>数据监控与分析 Agent</strong>：打通公司离线数据库 API，实现自动数据拉取、清洗、分析，并通过前端看板展示，整体提效运营数据分析流程。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content">
+              <strong>数据层</strong>：接入公司内部离线数据库 API，完成数据源配置。<br>
+              <strong>Dify 搭建</strong>：通过 Dify 搭建整体工作流（数据拉取 → 清洗 → 分析 → 输出）+ 外挂业务知识库，上下文处理包括段落划分、去除冗余信息和噪音。<br>
+              <strong>前端层</strong>：美团 Nokia + Dify 搭建前端看板，实现数据可视化展示与 Agent 交互入口。
+            </div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">搭建完成数据监控与分析 Agent，打通公司内部数据库到前端看板的完整链路，实现运营数据自动化分析，<strong>显著提效</strong>新媒体运营团队的数据工作。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 体验优化项目 ====== -->
+    <div class="project-category-header fade-in" style="margin-top:var(--space-xxl);">
+      <div class="project-category-icon ai" style="background:var(--rose-light);">🎨</div>
+      <div class="project-category-name">体验优化项目</div>
+      <div class="project-category-count">1 个项目</div>
+    </div>
+
+    <!-- Project 4: 趋动云 -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">04</div>
+        <div class="star-card-info">
+          <div class="star-card-company">趋动云操作台用户体验优化</div>
+          <div class="star-card-role">趋动科技 · 产品 · 体验优化方向</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="临时镜像(中断续训)功能">重建耗时 -40%</span>
+            <span class="star-card-metric success" data-tooltip="导航栏动线重构优化">首次项目 -25%</span>
+            <span class="star-card-metric" data-tooltip="200+社区反馈驱动">使用频率 30%</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">AI 开发训练平台趋动云面临<strong>新用户流失率高</strong>问题。社区 200+ 反馈显示：环境重建耗时长、训练中断需重来。新手上手门槛高，导航动线不合理。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">优化操作台用户流程以降低上手时间，设计商业化功能降低环境重建成本，提升用户留存与满意度。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content"><strong>需求分析</strong>：分析 200+ 社区反馈与 B 端需求，归类后制定优先级。<br><strong>功能设计</strong>：主导"临时镜像"支持模型训练断点续训，灰度上线验证。<br><strong>流程优化</strong>：亲自跑通猫狗模型训练/部署全流程，拆解痛点，重构导航栏。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">临时镜像使<strong>重建耗时降低 40%</strong>，使用频率达 30%。导航栏优化后新用户首次项目时间<strong>缩短 25%</strong>，整体满意度<strong>提升 20%</strong>。</div>
+          </div>
+        </div>
+        <div class="ai-metrics-dashboard" style="padding:0 var(--space-xxl) var(--space-xxl);">
+          <div class="ai-metrics-title">📊 数据指标体系</div>
+          <div class="ai-metrics-grid">
+            <div class="ai-metric-cell"><div class="ai-metric-value green">-40%</div><div class="ai-metric-label">环境重建耗时</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">30%</div><div class="ai-metric-label">功能使用频率</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">-25%</div><div class="ai-metric-label">首次项目时间</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">+20%</div><div class="ai-metric-label">用户满意度</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">200+</div><div class="ai-metric-label">社区反馈分析量</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 运营增长项目 ====== -->
+    <div class="project-category-header fade-in">
+      <div class="project-category-icon other">📈</div>
+      <div class="project-category-name">运营增长项目</div>
+      <div class="project-category-count">3 个项目</div>
+    </div>
+
+    <!-- Project 5: 海外刷掌官网 -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">05</div>
+        <div class="star-card-info">
+          <div class="star-card-company">海外刷掌官网 0-1 落地</div>
+          <div class="star-card-role">腾讯 · 产品运营 · 运营需求支持</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="分层留资通道优化后整体提升">留资率 +14%</span>
+            <span class="star-card-metric success" data-tooltip="从项目重启到正式上线">1 个月上线</span>
+            <span class="star-card-metric" data-tooltip="决策者/技术/渠道三类用户分层">3 类用户分群</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">刷掌支付海外官网项目<strong>搁置 3 个月</strong>，初版仅为信息展示页。目标覆盖海外企业决策者、技术/运营人员、渠道合作伙伴三类用户，但用户路径模糊、缺少分层转化机制，难以支撑海外线索获取。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">1 个月内重启并上线国际化官网，实现品牌塑造 + 线索转化 + 生态合作三大目标。跨团队协同推进（技术研发、品牌市场、海外业务、销售渠道），建立定期同步与分工协作机制。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content"><strong>分层用户转化</strong>：决策者→信任背书与案例展示；技术人员→技术方案与功能详解；渠道伙伴→生态价值与合作政策。<br><strong>分层 CTA 体系</strong>：按用户意向度设计浅（内容下载）、中（Demo 预约）、深（商务咨询）三级转化钩子。<br><strong>五阶段迭代</strong>：基础建设→信任深化→开发者赋能→生态完善→体验焕新。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">1 个月内从搁置到上线，分层留资体系使整体<strong>留资率提升 14%</strong>。官网成为海外线索获取核心引擎，支撑智能客服 RAG+Agent 模块的部署与评测闭环。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 6: DeepLink 生态运营 -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">06</div>
+        <div class="star-card-info">
+          <div class="star-card-company">DeepLink 开放生态体系构建</div>
+          <div class="star-card-role">上海 AI 实验室 · 产品运营 · 生态运营方向</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="动机-路径-引导-保障四维优化">滚动深度 40%→67%</span>
+            <span class="star-card-metric success" data-tooltip="Dify 多 Agent 自动化">交付周期 -57%</span>
+            <span class="star-card-metric" data-tooltip="超额完成年度拉新目标">软硬厂商合作</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">部门软硬自研产品<strong>缺乏开放生态</strong>，无合作伙伴认证体系与标准化接入流程。官网滚动深度仅 40%，底部到达率仅 10%，技术文章人工交付周期长。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">年度目标：可持续拓展合作企业。从 0 搭建开放生态体系（技术适配 + 生态伙伴运营），优化官网体验提升转化，建立自动化运营流程。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content"><strong>生态体系</strong>：对标腾讯云、阿里云、Google 合作体系，设计三级认证体系（先锋/优选/注册），配套技术评级与对应权益。<br><strong>官网优化</strong>：竞品分析 5 家 + A/B 测试 + 四维模型（动机-路径-引导-保障），分段式内容设计与流失拐点定位。<br><strong>自动化</strong>：Dify 多 Agent 系统，实现热点追踪、文章审查、数据复盘。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">成功引入软硬件厂商合作，超额完成年度伙伴拉新。官网滚动深度从 <strong>40%→67%</strong>，底部到达率 <strong>10%→35%</strong>。文章交付周期<strong>缩短 57%</strong>，粉丝上涨 1000+。</div>
+          </div>
+        </div>
+        <div class="ai-metrics-dashboard" style="padding:0 var(--space-xxl) var(--space-xxl);">
+          <div class="ai-metrics-title">📊 数据指标体系</div>
+          <div class="ai-metrics-grid">
+            <div class="ai-metric-cell"><div class="ai-metric-value green">+67%</div><div class="ai-metric-label">滚动深度提升</div><div class="ai-metric-target">基线 40%→67%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">+250%</div><div class="ai-metric-label">底部到达率</div><div class="ai-metric-target">10%→35%</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value green">-57%</div><div class="ai-metric-label">交付周期缩短</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value blue">1000+</div><div class="ai-metric-label">粉丝增长</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">5</div><div class="ai-metric-label">竞品分析覆盖</div></div>
+            <div class="ai-metric-cell"><div class="ai-metric-value">3</div><div class="ai-metric-label">认证等级设计</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 7: 多品牌运营 -->
+    <div class="star-card fade-in" onclick="this.classList.toggle('active')">
+      <div class="star-card-header">
+        <div class="star-card-number">07</div>
+        <div class="star-card-info">
+          <div class="star-card-company">多品牌数字化集客与培育运营</div>
+          <div class="star-card-role">游仁信息 · 产品运营 · 增长运营方向</div>
+          <div class="star-card-metrics-bar">
+            <span class="star-card-metric highlight" data-tooltip="企微数字化链路 vs 纯线下">转化率 +20%</span>
+            <span class="star-card-metric success" data-tooltip="年销售额增长">年销售额 +23%</span>
+            <span class="star-card-metric">4 大品牌</span>
+          </div>
+        </div>
+        <div class="star-card-arrow">⌄</div>
+      </div>
+      <div class="star-body">
+        <div class="star-body-inner">
+          <div class="star-block">
+            <span class="star-block-label s">S 情境</span>
+            <div class="star-block-content">养乐多、好侍、NITORI、苏菲等快消品牌<strong>线下地推转化效率低</strong>，线上线下数据未打通，全链路转化流失无记录。首次触达后用户流失严重。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label t">T 任务</span>
+            <div class="star-block-content">赋能多品牌数字化运营，降低销售人员流失率，提升线上线下整体成交量——<strong>盘活存量复购、拓展新增用户</strong>，建立可复用的标准化流程。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label a">A 行动</span>
+            <div class="star-block-content"><strong>问题定位</strong>：电话调研 2 个地区、10 位一线人员，识别核心痛点。<br><strong>策略设计</strong>：梳理历史销售数据提炼用户画像（36 岁左右、7-8 月为儿孙采购），搭建话术库与促销活动。<br><strong>体系搭建</strong>：企微数字化集客链路 + 用户标签体系 + 关键行为追踪点 + 分层数据监控。</div>
+          </div>
+          <div class="star-block">
+            <span class="star-block-label r">R 结果</span>
+            <div class="star-block-content">目标人群转化率较纯线下模式<strong>提升 20%</strong>。年销售额提升 23%，月销售额提升 17%。单月总成交额突破 12W+。沉淀可复用的快消品地推企微运营指南。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIBE CODING ==================== -->
+<section class="vibe-section" id="vibe-coding">
+  <div class="section-inner">
+    <span class="section-tag rose">VIBE CODING</span>
+    <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title fade-in" data-zh="独立开发项目" data-en="Vibe Coding Projects">独立开发项目</h2>
+    <span class="section-collapse-icon">⌄</span>
+    </div>
+    <div class="section-body">
+    <p class="section-desc fade-in">React Native 全栈 · AI Coding 驱动 · 从 0 到 1 独立交付</p>
+
+    <!-- ====== LearnFlow ====== -->
+    <div class="vibe-project yellow fade-in">
+      <div class="vibe-project-badge"><span class="num">01</span> LearnFlow</div>
+      <div class="lf-overview">
+      <div class="lf-intro-card">
+        <h3>LearnFlow 学了么 — 游戏化学习 App</h3>
+        <p><strong>LearnFlow 学了么</strong>是一款基于 React Native + Expo 构建的沉浸式技能学习伴侣应用。以像素风格界面 + 游戏化机制让学习更有趣。针对<strong>学习动力衰减快、路径不清晰、碎片化难专注</strong>三大痛点，用户可选择 AI 生成的技能树学习路径，在数字宠物的陪伴下完成学习节点，通过迷你游戏恢复体力，配合番茄钟专注学习。</p>
+        <p>项目由 <strong>AI Coding 驱动独立全栈开发</strong>（移动端 + 后端），涵盖用户认证、AI 技能树生成、数字宠物养成、游戏化激励、Pro 会员等完整功能链路，<strong>15 个页面、37+ API 端点、12 张数据表</strong>。</p>
+        <div class="tag-list">
+          <span class="tag">React Native</span><span class="tag">Expo 54</span><span class="tag">TypeScript</span>
+          <span class="tag">Node.js</span><span class="tag">MySQL</span><span class="tag">OpenAI/DeepSeek</span>
+          <span class="tag">JWT Auth</span><span class="tag">AI Coding</span>
+        </div>
+      </div>
+      <div class="lf-intro-card">
+        <h3>核心功能实现</h3>
+        <div style="display:flex;flex-direction:column;gap:var(--space-lg);">
+          <div style="background:var(--coral-light);border-radius:var(--rounded-lg);padding:var(--space-md);">
+            <div style="font-size:13px;font-weight:700;color:var(--coral-dark);margin-bottom:var(--space-xs);display:flex;align-items:center;gap:var(--space-xs);">👾 怪兽 Agent 对话</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--charcoal);">
+              采用 <strong>Function Calling 架构</strong>：用户输入 → LLM 判断意图 → 返回结构化 tool_calls → 服务端解析执行（调 DB/Service）→ 结果回传 LLM 生成自然语言回复。定义 <strong>10 个工具</strong>（创建领域/管理任务/写笔记/查状态等），System Prompt 注入实时上下文（领域列表/任务/怪兽状态），前端根据 toolResults 同步更新本地 UI。
+            </div>
+          </div>
+          <div style="background:#F0EEFF;border-radius:var(--rounded-lg);padding:var(--space-md);">
+            <div style="font-size:13px;font-weight:700;color:var(--brand-blue);margin-bottom:var(--space-xs);display:flex;align-items:center;gap:var(--space-xs);">🧠 AI 一键填充知识路径</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--charcoal);">
+              用户输入学习主题后，LLM 按预设 <strong>JSON Schema</strong> 自动生成结构化技能树：领域 → 阶段（大标题）→ 学习节点（含名称/描述/资源链接）。前端以<strong>可编辑表单</strong>展示生成结果，用户可增删改任意节点。生成支持<strong>手动 + AI 混合模式</strong>——手动创建框架后一键调用 AI 补全剩余内容。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version Roadmap -->
+    <div class="lf-roadmap fade-in">
+      <h3>版本规划方法论</h3>
+      <p class="hint">以北极星指标为牵引，按「学生 → 职场 → 留存 → 商业化」四阶段渐进迭代，每版本设核心成功指标闭环验证</p>
+      <div class="lf-roadmap-track">
+        <div class="lf-version-card current">
+          <div class="lf-version-num">V1.0</div>
+          <div class="lf-version-date">6/15 · 学生·期末复习</div>
+          <span class="lf-version-tag student">学生</span>
+          <div class="lf-version-desc">MVP 上线，AI 技能树 + 怪兽 + 番茄钟 + Pro</div>
+          <div class="lf-version-metric">北极星：月新注册 ≥300</div>
+          <div class="lf-version-metric">学习完成 ≥60% | 次日留存 ≥35%</div>
+        </div>
+        <div class="lf-roadmap-arrow">→</div>
+        <div class="lf-version-card">
+          <div class="lf-version-num">V1.1</div>
+          <div class="lf-version-date">7/1 · 暑假学习</div>
+          <span class="lf-version-tag student">学生</span>
+          <div class="lf-version-desc">暑假专题 + 学习提醒 + 社区分享</div>
+          <div class="lf-version-metric">北极星：月新注册 ≥500</div>
+        </div>
+        <div class="lf-roadmap-arrow">→</div>
+        <div class="lf-version-card">
+          <div class="lf-version-num">V2.0</div>
+          <div class="lf-version-date">8/5 · 职场碎片化</div>
+          <span class="lf-version-tag work">职场</span>
+          <div class="lf-version-desc">AI 签到 + 知识卡片 + 职场技能树扩展</div>
+          <div class="lf-version-metric">北极星：职场注册 ≥200</div>
+        </div>
+        <div class="lf-roadmap-arrow">→</div>
+        <div class="lf-version-card">
+          <div class="lf-version-num">V3.0</div>
+          <div class="lf-version-date">9/1 · 留存专项</div>
+          <span class="lf-version-tag retention">留存</span>
+          <div class="lf-version-desc">召回 Push + 打卡体系 + 流失预警模型</div>
+          <div class="lf-version-metric">北极星：流失率 -20%</div>
+        </div>
+        <div class="lf-roadmap-arrow">→</div>
+        <div class="lf-version-card">
+          <div class="lf-version-num">V4.0</div>
+          <div class="lf-version-date">10/21 · 商业化</div>
+          <span class="lf-version-tag biz">商业化</span>
+          <div class="lf-version-desc">付费转化优化 + 企业版 + 内容生态</div>
+          <div class="lf-version-metric">完整商业闭环</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshots -->
+    <div class="lf-screenshots fade-in">
+      <h3>应用截图</h3>
+      <p class="hint">从新手引导到学习闭环 — 5 个核心页面展示完整用户旅程</p>
+      <div class="lf-gallery">
+        <div class="lf-screenshot-card">
+          <img src="images/learnflow-story.jpg" alt="新手故事引导页" class="lf-screenshot-img" loading="lazy">
+          <div class="lf-screenshot-label">新手故事引导</div>
+        </div>
+        <div class="lf-screenshot-card">
+          <img src="images/learnflow-home.jpg" alt="学习地图首页" class="lf-screenshot-img" loading="lazy">
+          <div class="lf-screenshot-label">学习地图首页</div>
+        </div>
+        <div class="lf-screenshot-card">
+          <img src="images/learnflow-skilltree.jpg" alt="技能树页面" class="lf-screenshot-img" loading="lazy">
+          <div class="lf-screenshot-label">技能树详情页</div>
+        </div>
+        <div class="lf-screenshot-card">
+          <img src="images/learnflow-pomodoro.jpg" alt="番茄钟计时页" class="lf-screenshot-img" loading="lazy">
+          <div class="lf-screenshot-label">番茄钟专注</div>
+        </div>
+        <div class="lf-screenshot-card">
+          <img src="images/learnflow-monster.jpg" alt="怪兽养成页面" class="lf-screenshot-img" loading="lazy">
+          <div class="lf-screenshot-label">数字怪兽养成</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Comparison Section -->
+    <div class="lf-model-compare fade-in">
+      <h3>模型选型与效果评测</h3>
+      <p class="hint">评测范围：AI 填充功能（自定义领域）+ AI 对话功能（怪兽页面）。评测目标：确保 AI 功能效果稳定、可控、无风险</p>
+      <div class="lf-model-grid">
+        <div class="lf-model-card">
+          <div class="provider">🔵 方案 A：Deepseek v4-flash</div>
+          <p style="font-size:14px;color:var(--slate);line-height:1.7;">DeepSeek 轻量级模型，<strong>付费调用</strong>。中文语境理解和结构化输出表现优异，在 AI 对话和 AI 填充两端均显著优于对比方案。</p>
+          <div class="lf-model-specs">
+            <div class="lf-model-spec"><div class="val">更快</div><div class="lbl">AI 填充响应时长</div></div>
+            <div class="lf-model-spec"><div class="val">更快</div><div class="lbl">AI 对话响应时长</div></div>
+            <div class="lf-model-spec"><div class="val">更优</div><div class="lbl">内容准确性</div></div>
+            <div class="lf-model-spec"><div class="val">更稳定</div><div class="lbl">输出稳定性</div></div>
+            <div class="lf-model-spec"><div class="val">低</div><div class="lbl">OOC 率（角色偏离）</div></div>
+            <div class="lf-model-spec"><div class="val">付费</div><div class="lbl">价格</div></div>
+          </div>
+        </div>
+        <div class="lf-model-card">
+          <div class="provider">🟢 方案 B：Agnes-2.0-Flash</div>
+          <p style="font-size:14px;color:var(--slate);line-height:1.7;">Agnes 系列模型<strong>免费</strong>，在结构化 JSON Schema 输出方面有一定优化，但综合效果不及 DeepSeek，作为备选方案。</p>
+          <div class="lf-model-specs">
+            <div class="lf-model-spec"><div class="val">较快</div><div class="lbl">AI 填充响应时长</div></div>
+            <div class="lf-model-spec"><div class="val">较快</div><div class="lbl">AI 对话响应时长</div></div>
+            <div class="lf-model-spec"><div class="val">良好</div><div class="lbl">内容准确性</div></div>
+            <div class="lf-model-spec"><div class="val">稳定</div><div class="lbl">输出稳定性</div></div>
+            <div class="lf-model-spec"><div class="val">较低</div><div class="lbl">OOC 率（角色偏离）</div></div>
+            <div class="lf-model-spec"><div class="val" style="color:var(--success-accent);">免费</div><div class="lbl">价格</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:var(--space-lg);padding:var(--space-md);background:var(--surface);border-radius:var(--rounded-lg);">
+        <span style="font-size:12px;font-weight:700;color:var(--brand-blue);text-transform:uppercase;letter-spacing:0.04em;">评测方法与指标制定</span>
+        <div style="font-size:13px;line-height:1.8;color:var(--charcoal);margin-top:var(--space-xs);">
+          <strong>指标制定方法</strong>：新手阶段通过 <strong>AI 交叉验证</strong>（多个模型同时询问同一问题，取合理值）初步定标。无法判断时参考同类产品基准。<br>
+          <strong>评测流程</strong>：先<strong>内部测试</strong>（团队自测覆盖核心场景）→ <strong>灰度发布</strong>（小范围真实用户）→ 监控<strong>采纳率（准确率）达 90%-95%</strong> 才全量上线。<br>
+          <strong>核心监控维度</strong>：响应时长、内容准确性、输出稳定性、OOC 率。
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- 券商投研 RAG 项目 -->
+    <div class="vibe-project blue fade-in">
+      <div class="vibe-project-badge"><span class="num">02</span> 券商投研 RAG</div>
+      <div class="lf-rag-card">
+      <h3>📊 券商投研智能问答 RAG 系统</h3>
+      <p style="font-size:15px;line-height:1.8;">面向<strong>券商投研分析师、机构交易员、财富管理投顾</strong>的金融高价值场景 RAG 落地项目。基于 Dify 搭建，上传 10000 份结构化研报，采用混合检索 + Jina Reranker + 结构化 Prompt 工程，全流程贴合投研实际业务。</p>
+
+      <!-- 痛点 + 技术栈 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);margin-bottom:var(--space-xl);">
+        <div style="background:var(--brand-red);border-radius:var(--rounded-xl);padding:var(--space-xl);">
+          <span style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--brand-red-dark);">核心痛点</span>
+          <ul style="list-style:none;padding:0;margin-top:var(--space-sm);">
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-xl);position:relative;"><span style="position:absolute;left:0;">①</span>大模型幻觉：编造财报毛利率，合规风险极高</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-xl);position:relative;"><span style="position:absolute;left:0;">②</span>信息滞后：财报/政策实时更新，通用模型无覆盖</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-xl);position:relative;"><span style="position:absolute;left:0;">③</span>需求极细：通用检索匹配不到精准金融数据</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-xl);position:relative;"><span style="position:absolute;left:0;">④</span>语义缺失：无法识别"研发投入=研发费用"</li>
+          </ul>
+        </div>
+        <div style="background:var(--teal-light);border-radius:var(--rounded-xl);padding:var(--space-xl);">
+          <span style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--moss-dark);">技术栈</span>
+          <ul style="list-style:none;padding:0;margin-top:var(--space-sm);">
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-lg);position:relative;"><span style="position:absolute;left:0;">•</span>Dify + 10000 份研报 · 块长 500 tokens</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-lg);position:relative;"><span style="position:absolute;left:0;">•</span>混合检索（语义 0.7 + 关键词 0.3）</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-lg);position:relative;"><span style="position:absolute;left:0;">•</span>Jina Reranker 精排 · Top K=5</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-lg);position:relative;"><span style="position:absolute;left:0;">•</span>结构化 Prompt + Temperature 0.3</li>
+            <li style="font-size:14px;color:var(--charcoal);line-height:2;padding:var(--space-xxs) 0 var(--space-xxs) var(--space-lg);position:relative;"><span style="position:absolute;left:0;">•</span>热点缓存 + API 服务化 + 流式输出</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Prompt 示例 + 关键指标 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);">
+        <div style="background:var(--canvas);border:1px solid var(--hairline-soft);border-radius:var(--rounded-xl);padding:var(--space-xl);">
+          <span style="font-size:14px;font-weight:700;color:var(--brand-blue);text-transform:uppercase;letter-spacing:0.04em;">Prompt 示例</span>
+          <div style="font-size:14px;line-height:2.2;color:var(--charcoal);margin-top:var(--space-sm);">
+            <strong>角色</strong>：你是严谨的金融研报分析师。<br>
+            <strong>面向用户</strong>：券商投研团队。<br>
+            <strong>场景</strong>：用户提问研报相关问题。<br>
+            <strong>规则</strong>：<br>
+            ① 仅基于给定研报生成，禁止编造。<br>
+            ② 结论必须标注来源 [Doc456]。<br>
+            ③ 无法回答时回复"现有研报未覆盖"。<br>
+            ④ 观点矛盾时标注分歧并列出各方依据。<br>
+            ⑤ 禁用"可能""大概"。
+          </div>
+        </div>
+        <div style="background:var(--canvas);border:1px solid var(--hairline-soft);border-radius:var(--rounded-xl);padding:var(--space-xl);">
+          <span style="font-size:14px;font-weight:700;color:var(--moss-dark);text-transform:uppercase;letter-spacing:0.04em;">关键指标与设计方法</span>
+          <div style="font-size:14px;line-height:2;color:var(--charcoal);margin-top:var(--space-sm);">
+            <div style="margin-bottom:var(--space-md);">
+              <strong style="color:var(--ink);">时延 ≤5s 的保证</strong><br>
+              知识库预加载至内存（检索 <200ms）+ BERT 蒸馏版意图分类（<100ms）+ 流式输出首 token <1s + 三层路由：简单→缓存<1s / 中等→RAG 2~3s / 复杂→异步处理。
+            </div>
+            <div style="margin-bottom:var(--space-md);">
+              <strong style="color:var(--ink);">权重 0.7/0.3</strong><br>
+              网格搜索验证（0.1~0.9）对比 nDCG@5 与 MRR 得出最优值，兼顾语义泛化与术语精确召回。
+            </div>
+            <div>
+              <strong style="color:var(--ink);">Reranker 规则</strong><br>
+              Jina Cross-Encoder 对 Top 20 候选块成对打分（0~1），降序取 Top 5，分数 <0.5 丢弃。解决双塔检索"语义相似但答案错误"问题。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Recruit-plan-app -->
+    <div class="vibe-project coral fade-in">
+      <div class="vibe-project-badge"><span class="num">03</span> Recruit-plan</div>
+      <div class="lf-recruit-card">
+      <h3>🧭 Recruit-plan-app — 秋招求职规划工具</h3>
+      <p>一个处于早期探索阶段的 <strong>AI Coding 项目</strong>，目标是帮助求职者系统性规划秋招流程——包括岗位匹配、时间线管理、面试准备追踪等核心功能。项目体现了对<strong>求职场景的产品化思考</strong>，与 LearnFlow 形成"学习→求职"的能力延伸。</p>
+      <div style="display:flex;gap:var(--space-xl);margin-top:var(--space-xl);flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;text-align:center;padding:var(--space-md);background:rgba(255,255,255,0.5);border-radius:var(--rounded-lg);">
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:500;">🔗</div>
+          <div style="font-size:13px;color:var(--slate);margin-top:4px;">GitHub 开源</div>
+        </div>
+        <div style="flex:1;min-width:160px;text-align:center;padding:var(--space-md);background:rgba(255,255,255,0.5);border-radius:var(--rounded-lg);">
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:500;">🎯</div>
+          <div style="font-size:13px;color:var(--slate);margin-top:4px;">求职场景产品化</div>
+        </div>
+        <div style="flex:1;min-width:160px;text-align:center;padding:var(--space-md);background:rgba(255,255,255,0.5);border-radius:var(--rounded-lg);">
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:500;">🔄</div>
+          <div style="font-size:13px;color:var(--slate);margin-top:4px;">学习→求职能力延伸</div>
+        </div>
+      </div>
+      <div style="margin-top:var(--space-md);font-size:13px;color:var(--steel);">
+        <a href="https://github.com/RENATA-rui/Recruit-plan-app" target="_blank" style="color:var(--brand-blue);text-decoration:none;">→ 查看 GitHub 仓库</a>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== AWARDS ==================== -->
+<section class="section" id="skills">
+  <div class="section-inner">
+    <span class="section-tag blue">HONORS</span>
+    <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title fade-in" data-zh="荣誉奖项" data-en="Honors &amp; Awards">荣誉奖项</h2>
+    <span class="section-collapse-icon">⌄</span>
+    </div>
+    <div class="section-body">
+    <h2 class="section-title fade-in" data-zh="荣誉奖项" data-en="Honors &amp; Awards">荣誉奖项</h2>
+
+    <!-- 国家级 -->
+    <div style="margin-bottom:var(--space-lg);">
+      <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--yellow-dark);background:var(--yellow-light);padding:2px 10px;border-radius:var(--rounded-full);">国家级</span>
+    </div>
+    <div class="awards-grid fade-in" style="margin-bottom:var(--space-xl);">
+      <div class="award-card" style="grid-column:1/-1;background:#F0EEFF;border-color:#C8C0FF;"><div class="award-icon blue">🎓</div><div class="award-info"><strong>负责人 · 大学生创新创业训练计划国家级立项</strong><div class="award-level">自建实验网站 nutrigrade.top · N=2053 准实验 + 60 人深度访谈 · Stata 建模分析</div></div></div>
+    </div>
+    <div style="display:flex;gap:var(--space-md);margin-bottom:var(--space-xl);flex-wrap:wrap;">
+      <div class="award-card" style="flex:1;min-width:220px;"><div class="award-icon gold">🥈</div><div class="award-info">全国企业竞争模拟大赛<div class="award-level">运营赛道二等奖</div></div></div>
+      <div class="award-card" style="flex:1;min-width:220px;"><div class="award-icon blue">🌐</div><div class="award-info">全国大学生外交英语大赛<div class="award-level">翻译大赛三等奖</div></div></div>
+    </div>
+
+    <!-- 省市级 -->
+    <div style="margin-bottom:var(--space-lg);">
+      <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--brand-blue);background:#F0EEFF;padding:2px 10px;border-radius:var(--rounded-full);">省市级</span>
+    </div>
+    <div class="awards-grid fade-in" style="margin-bottom:var(--space-xl);">
+      <div class="award-card" style="grid-column:1/-1;background:var(--yellow-light);border-color:var(--brand-yellow);"><div class="award-icon gold">🏆</div><div class="award-info"><strong>负责人 · 挑战杯上海市课外学术科技作品竞赛一等奖</strong><div class="award-level">2025 · 研究主题：助推型政策工具对健康消费影响的机制研究</div></div></div>
+      <div class="award-card"><div class="award-icon blue">🥈</div><div class="award-info"><strong>核心成员 · 中国国际大学生创新大赛</strong><div class="award-level">2024 上海赛区银奖</div></div></div>
+      <div class="award-card"><div class="award-icon blue">⚡</div><div class="award-info"><strong>核心成员 · 节能减排社会实践与科技竞赛</strong><div class="award-level">上海赛区银奖 · 营销总监 · 签约 5000 件订单</div></div></div>
+      <div class="award-card"><div class="award-icon gold">🥇</div><div class="award-info"><strong>核心成员 · 知行杯上海市社会实践大赛</strong><div class="award-level">一等奖 · 38 个社区治理研究</div></div></div>
+      <div class="award-card"><div class="award-icon blue">📖</div><div class="award-info">外教社·词达人杯英语词汇能力大赛<div class="award-level">上海赛区三等奖</div></div></div>
+    </div>
+
+    <!-- 校级 & 社会 -->
+    <div style="margin-bottom:var(--space-lg);">
+      <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--moss-dark);background:var(--teal-light);padding:2px 10px;border-radius:var(--rounded-full);">校级 & 社会</span>
+    </div>
+    <div class="awards-grid fade-in">
+      <div class="award-card"><div class="award-icon blue">🎓</div><div class="award-info">华东理工大学二等奖学金<div class="award-level">专业前 10%</div></div></div>
+      <div class="award-card"><div class="award-icon gold">🔬</div><div class="award-info">全国大学生物理实验竞赛<div class="award-level">华东理工大学校赛二等奖</div></div></div>
+      <div class="award-card"><div class="award-icon gold">💛</div><div class="award-info">江苏省省级优秀志愿者<div class="award-level">2022</div></div></div>
+      <div class="award-card"><div class="award-icon blue">📋</div><div class="award-info">CGSS 中国综合社会调查<div class="award-level">调查员</div></div></div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<div class="cta-banner" id="cta">
+  <div class="cta-content">
+    <h2 class="cta-title">Let's build something great.</h2>
+    <p class="cta-desc">AI 产品经理 · 2027 届应届生 · 腾讯 / 趋动 / AI Lab 实习背景 · 随时入职</p>
+    <div class="cta-buttons">
+      <a href="mailto:971117427@qq.com" class="btn-on-dark">📧 971117427@qq.com</a>
+      <a href="tel:19502203515" class="btn-on-dark">📞 19502203515</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-text">He Rui 何睿</div>
+      <p class="footer-desc">AI 产品经理 | HKU AI & Society M.Sc.<br>专注 AI 开发平台、大模型应用与智能体生态</p>
+    </div>
+    <div>
+      <div class="footer-col-title">实习</div>
+      <ul class="footer-links"><li><a href="#experience">腾讯</a></li><li><a href="#experience">趋动科技</a></li><li><a href="#experience">上海 AI Lab</a></li><li><a href="#experience">游仁信息</a></li></ul>
+    </div>
+    <div>
+      <div class="footer-col-title">项目</div>
+      <ul class="footer-links"><li><a href="#projects">Palm2.0 双掌识别</a></li><li><a href="#projects">RAG 智能客服</a></li><li><a href="#projects">DeepLink 生态</a></li><li><a href="#vibe-coding">LearnFlow</a></li></ul>
+    </div>
+    <div>
+      <div class="footer-col-title">联系</div>
+      <ul class="footer-links"><li><a href="mailto:971117427@qq.com">971117427@qq.com</a></li><li><a href="tel:19502203515">19502203515</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 He Rui. Built with AI Coding.</span>
+    <span>Miro Style Design System</span>
+  </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+/* ========== Scroll Animations ========== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ========== Back to Top ========== */
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('visible', window.scrollY > 600);
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+/* ========== Timeline Toggle ========== */
+function toggleTimeline(card) {
+  card.classList.toggle('active');
+}
+
+/* ========== Mobile Nav ========== */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+function closeMobileNav() { mobileNav.classList.remove('open'); }
+
+/* ========== Nav Active State ========== */
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section[id], .cta-banner');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.getAttribute('id');
+  });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+});
+
+/* ========== Language Toggle ========== */
+let currentLang = 'zh';
+let textNodesCache = null;
+
+function captureTextNodes() {
+  textNodesCache = [];
+  const allText = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  while (allText.nextNode()) {
+    const n = allText.currentNode;
+    const p = n.parentElement;
+    if (!p || p.closest('script,style,noscript')) continue;
+    textNodesCache.push({ node: n, text: n.textContent });
+  }
+}
+
+const translations = {
+  '2027 届应届毕业生 · AI 产品方向 · 随时入职': '2027 Graduate · AI Product · Available Immediately',
+  '关于我': 'About Me',
+  '实习经历': 'Experience',
+  '核心项目': 'Core Projects',
+  '技能荣誉': 'Skills & Honors',
+  '荣誉奖项': 'Honors & Awards',
+  '独立开发项目': 'Vibe Coding Projects',
+  '联系我': 'Contact',
+  '获取简历 ↓': 'Resume ↓',
+  'ENFJ · 责任感驱动 · AI 原生代产品人': 'ENFJ · Responsibility-driven · AI-native Product Talent',
+  '教育背景': 'Education',
+  '产品兴趣': 'Product Interests',
+  '工具与方法': 'Tools & Methods',
+  '英语能力': 'English Proficiency',
+  '香港大学': 'University of Hong Kong',
+  '华东理工大学': 'East China University of Science and Technology',
+  'AI, Ethics and Society 硕士': 'M.Sc. in AI, Ethics and Society',
+  '公共管理 本科（专业前 3%）': 'B.A. in Public Administration (Top 3%)',
+  '辅修': 'Minor',
+  '牛津大学 AI & Finance 课程': 'Oxford AI & Finance Program',
+  '核心课程': 'Core Courses',
+  '人工智能、数据与算法基础、计算社会科学': 'AI, Data & Algorithm Foundations, Computational Social Science',
+  'AI 产品（开发平台、大模型应用）、云计算（PaaS、SaaS）、智能体、AI Coding': 'AI Products (Dev Platform, LLM Apps), Cloud (PaaS, SaaS), AI Agents, AI Coding',
+  '问题拆解 · A/B 测试 · 埋点设计 · 需求优先级管理 · 竞品分析 · 用户研究': 'Problem Decomposition · A/B Testing · Event Tracking · Prioritization · Competitive Analysis · User Research',
+  '从运营到产品 — 四段实习，逐层深入 AI 产品核心': 'From Operations to Product — 4 Internships, Deepening AI Product Expertise',
+  '按赛道分类 · STAR 法则拆解 · 数据指标体系驱动': 'Categorized by Track · STAR Framework · Data-Driven Metrics',
+  'React Native 全栈 · AI Coding 驱动 · 从 0 到 1 独立交付': 'React Native Full-Stack · AI-Coding Driven · Independent 0-to-1 Delivery',
+  'AI 项目': 'AI Projects',
+  '运营增长项目': 'Growth & Operations',
+  '体验优化项目': 'UX Optimization',
+  '查看项目': 'View Projects',
+  '2 个项目': '2 Projects',
+  '3 个项目': '3 Projects',
+  '1 个项目': '1 Project',
+  '段实习经历': 'Internships',
+  '核心项目': 'Core Projects',
+  '个人奖项': 'Awards',
+  'Vibe Coding 项目': 'Vibe Coding Projects',
+  '从运营到产品 — 四段实习，逐层深入 AI 产品核心': 'From Operations to Product — 4 Internships Building AI Product Expertise',
+  'Let\'s build something great.': 'Let\'s build something great.',
+  'AI 产品经理 | HKU AI & Society M.Sc.': 'AI Product Manager | HKU AI & Society M.Sc.',
+  '专注 AI 开发平台、大模型应用与智能体生态': 'Focusing on AI Dev Platforms, LLM Applications & Agent Ecosystems',
+  '实习': 'Internships',
+  '项目': 'Projects',
+  '联系': 'Contact',
+  '腾讯': 'Tencent',
+  '趋动科技': 'VirtAI',
+  '上海 AI Lab': 'Shanghai AI Lab',
+  '游仁信息': 'Youren InfoTech',
+  'Palm2.0 双掌识别': 'Palm2.0 Dual-Palm Recognition',
+  'RAG 智能客服': 'RAG Smart Customer Service',
+  'DeepLink 生态': 'DeepLink Ecosystem',
+  'LearnFlow': 'LearnFlow',
+  '腾讯计算机系统有限公司': 'Tencent Computer Systems Co., Ltd.',
+  'AI 产品实习生 · 海外刷掌支付算法与业务平台': 'AI Product Intern · Overseas Palm Payment Algorithm & Platform',
+  '北京趋动科技有限公司': 'VirtAI Technologies Co., Ltd.',
+  'AI 产品实习生 · AI 开发训练平台趋动云': 'AI Product Intern · VirtAI Cloud AI Dev Platform',
+  '上海市人工智能创新中心 (AI Lab)': 'Shanghai AI Innovation Center (AI Lab)',
+  'AI 产品运营 · DeepLink 人工智能框架平台': 'AI Product Operations · DeepLink AI Framework Platform',
+  '游仁信息科技（上海）有限公司': 'Youren InfoTech (Shanghai) Co., Ltd.',
+  '产品运营 · 快消品牌数字化运营': 'Product Operations · FMCG Brand Digital Operations',
+  'AI 产品': 'AI Product',
+  '产品运营': 'Product Operations',
+  'AI 产品运营': 'AI Product Operations',
+  '需求设计': 'Requirement Design',
+  '国际化': 'Internationalization',
+  '生态建设': 'Ecosystem Building',
+  '用户增长': 'User Growth',
+  '商业化': 'Commercialization',
+  '点击展开详情': 'Click to expand',
+  '查看 GitHub 仓库': 'View GitHub Repository',
+  '© 2026 He Rui. Built with AI Coding.': '© 2026 He Rui. Built with AI Coding.',
+  'Miro Style Design System': 'Miro Style Design System',
+  // LearnFlow
+  'LearnFlow 学了么 — 游戏化学习 App': 'LearnFlow — Gamified Learning App',
+  '核心功能实现': 'Core Feature Implementation',
+  '应用截图': 'App Screenshots',
+  '从新手引导到学习闭环 — 5 个核心页面展示完整用户旅程': 'From Onboarding to Learning Loop — 5 Core Screens Showcasing the Full User Journey',
+  '新手故事引导': 'Onboarding Story',
+  '学习地图首页': 'Learning Map Home',
+  '技能树详情页': 'Skill Tree Detail',
+  '番茄钟专注': 'Pomodoro Focus',
+  '数字怪兽养成': 'Digital Monster Companion',
+  '版本规划方法论': 'Version Planning Methodology',
+  '模型选型与效果评测': 'Model Selection & Evaluation',
+  '评测方法与指标制定': 'Evaluation Method & Metric Design',
+  // Awards
+  '国家级': 'National Level',
+  '省市级': 'Provincial/Municipal Level',
+  '校级 & 社会': 'University & Social',
+  '负责人 · 大学生创新创业训练计划国家级立项': 'Lead · National Innovation & Entrepreneurship Training Program',
+  '自建实验网站 nutrigrade.top · N=2053 准实验 + 60 人深度访谈 · Stata 建模分析': 'Self-built nutrigrade.top · N=2,053 quasi-experiment + 60 interviews · Stata modeling',
+  '全国企业竞争模拟大赛': 'National Enterprise Competition Simulation',
+  '运营赛道二等奖': 'Operations Track 2nd Prize',
+  '全国大学生外交英语大赛': 'National College Diplomatic English Contest',
+  '翻译大赛三等奖': 'Translation Contest 3rd Prize',
+  '负责人 · 挑战杯上海市课外学术科技作品竞赛一等奖': 'Lead · Shanghai Challenge Cup 1st Prize',
+  '2025 · 研究主题：助推型政策工具对健康消费影响的机制研究': '2025 · Nudge Policy Impact on Health Consumption',
+  '核心成员 · 中国国际大学生创新大赛': 'Core Member · China International College Innovation Contest',
+  '2024 上海赛区银奖': '2024 Shanghai Silver Award',
+  '核心成员 · 节能减排社会实践与科技竞赛': 'Core Member · Energy Conservation & Emission Reduction Contest',
+  '上海赛区银奖 · 营销总监 · 签约 5000 件订单': 'Shanghai Silver · Marketing Director · 5,000-unit order',
+  '核心成员 · 知行杯上海市社会实践大赛': 'Core Member · Zhixing Cup Shanghai Social Practice',
+  '一等奖 · 38 个社区治理研究': '1st Prize · 38-community governance study',
+  '外教社·词达人杯英语词汇能力大赛': 'Word Master Cup English Vocabulary Contest',
+  '上海赛区三等奖': 'Shanghai 3rd Prize',
+  '华东理工大学二等奖学金': 'ECUST 2nd-Class Scholarship',
+  '专业前 10%': 'Top 10%',
+  '全国大学生物理实验竞赛': 'National College Physics Experiment Contest',
+  '华东理工大学校赛二等奖': 'ECUST Campus 2nd Prize',
+  '江苏省省级优秀志愿者': 'Jiangsu Provincial Outstanding Volunteer',
+  'CGSS 中国综合社会调查': 'CGSS China General Social Survey',
+  '调查员': 'Survey Interviewer',
+  // Project cards
+  '刷掌官网智能客服落地与优化': 'Palm Payment Website Smart Customer Service Deployment & Optimization',
+  'Palm2.0 双掌识别需求落地': 'Palm2.0 Dual-Palm Recognition Implementation',
+  '趋动云操作台用户体验优化': 'VirtAI Cloud Console UX Optimization',
+  '海外刷掌官网 0-1 落地': 'Overseas Palm Payment Website 0-to-1 Launch',
+  'DeepLink 开放生态体系构建': 'DeepLink Open Ecosystem Development',
+  '多品牌数字化集客与培育运营': 'Multi-Brand Digital Acquisition & Nurture Operations',
+  '腾讯 · AI 产品实习生 · 海外官网智能客服': 'Tencent · AI Product Intern · Overseas Website Smart CS',
+  '10 轮内解决率 ≥85%': 'Resolution within 10 turns ≥85%',
+  '混元大模型 + RAG 知识库': 'Hunyuan LLM + RAG Knowledge Base',
+  'B 端企业：房地产/医院/体育场馆': 'B2B: Real Estate / Hospitals / Stadiums',
+  '满意度 >4.5/5': 'Satisfaction >4.5/5',
+  '业务团队刚组建一年尚无独立官网': 'Business team was 1 year old with no independent website',
+  '销售急需高质量海外线索': 'Sales urgently needed quality overseas leads',
+  '官网面向 B 端企业（房地产、医院、体育场馆等）提供支付/通行/考勤服务': 'Website served B2B clients (real estate, hospitals, stadiums) for payment/access/attendance',
+  '团队需要一个能承接流量并转化线索的广告页': 'Team needed a landing page to capture traffic and convert leads',
+  '0-1 牵头搭建官网': 'Led 0-to-1 website development',
+  '针对不同客户设计用户旅程与分层 CTA': 'Designed user journeys and tiered CTAs for different client types',
+  '提升留资效率与质量': 'Improved lead capture efficiency and quality',
+  '核心 AI 功能——导师带着 0-1 搭建知识库 + 混元大模型驱动的智能客服模块': 'Core AI feature — mentor-guided 0-1 build of KB + Hunyuan LLM-powered smart CS module',
+  '架构为意图识别 + 轻量 Agent 调度 + RAG 增强检索': 'Architecture: Intent Recognition + Lightweight Agent + RAG',
+  '目标：10 条对话内找到答案': 'Goal: find answers within 10 conversation turns',
+  '数据层：负责数据库数据清洗、文档切片、向量化入库': 'Data Layer: Data cleaning, document chunking, vectorization into DB',
+  'AI 模块设计：RAG 检索增强生成 + 意图识别 + 记忆机制设计': 'AI Module Design: RAG retrieval + intent recognition + memory mechanism',
+  '意图识别四层机制：① 明确意图 → 直接进入 RAG/Agent/功能调用': '4-level Intent: ① Clear intent → direct RAG/Agent/function call',
+  '模糊意图（置信度 0.3-0.6）→ 主动提问 1-2 个澄清性问题': 'Vague intent (confidence 0.3-0.6) → proactive 1-2 clarifying questions',
+  '结合上下文重新识别': 'Re-identify with new input + original + short-term memory',
+  '仍模糊 → 长记忆检索 + 关键词匹配 + 兜底引导': 'Still vague → long memory retrieval + keyword match + fallback guidance',
+  '清晰后执行对应功能': 'Once clear → execute corresponding function',
+  '用户问刷掌支付怎么用？': 'User asks: "How to use palm payment?"',
+  '模糊点在于想问操作还是接入': 'Ambiguity: user operation vs merchant integration',
+  '客服反问您是普通用户想了解支付操作，还是商户想了解接入流程？': 'Agent asks: "Are you a regular user wanting payment instructions, or a merchant wanting integration?"',
+  '效果评测：上线前由产品/营销/测试/开发多方打分汇总': 'Evaluation: Pre-launch scoring by product, marketing, testing, and dev teams',
+  '上线后每次知识库更新或 Prompt 修改自动跑离线评测': 'Post-launch: auto offline evaluation after every KB update or prompt change',
+  '问题解决率 ≥85%（10 轮对话内）': 'Resolution ≥85% (within 10 turns)',
+  '应答准确率 >90%': 'Response accuracy >90%',
+  '用户满意度 >4.5/5': 'User satisfaction >4.5/5',
+  '官网成为海外线索获取核心引擎': 'Website became core overseas lead generation engine',
+  '示例：对方': 'Example:',
+  '腾讯 · AI 产品 · 算法优化方向': 'Tencent · AI Product · Algorithm Optimization',
+  '趋动科技 · 产品 · 体验优化方向': 'VirtAI · Product · UX Optimization',
+  '腾讯 · 产品运营 · 运营需求支持': 'Tencent · Product Operations · Business Support',
+  '上海 AI 实验室 · 产品运营 · 生态运营方向': 'Shanghai AI Lab · Product Operations · Ecosystem',
+  '游仁信息 · 产品运营 · 增长运营方向': 'Youren InfoTech · Product Operations · Growth',
+  // Timeline
+  '2025/09 — 2026/02': 'Sep 2025 — Feb 2026',
+  '2025/07 — 2025/09': 'Jul 2025 — Sep 2025',
+  '2024/06 — 2024/10': 'Jun 2024 — Oct 2024',
+  '2024/01 — 2024/03': 'Jan 2024 — Mar 2024',
+  'S 情境': 'S Situation',
+  'T 任务': 'T Task',
+  'A 行动': 'A Action',
+  'R 结果': 'R Result',
+  '📊 数据指标体系': '📊 Data Metrics',
+  '识别速度 +60%': 'Recognition Speed +60%',
+  '响应 -0.15s': 'Response -0.15s',
+  '5 核心接口': '5 Core APIs',
+  '应答准确率 ≥90%': 'Accuracy ≥90%',
+  '问题解决率 ≥85%': 'Resolution Rate ≥85%',
+  '7×24 在线': '7×24 Online',
+  '留资率 +14%': 'Lead Rate +14%',
+  '1 个月上线': '1-Month Launch',
+  '3 类用户分群': '3 User Segments',
+  '滚动深度 40%→67%': 'Scroll Depth 40%→67%',
+  '交付周期 -57%': 'Delivery Cycle -57%',
+  '软硬厂商合作': 'Hardware/Software Vendor Partnerships',
+  '重建耗时 -40%': 'Rebuild Time -40%',
+  '首次项目 -25%': 'First Project -25%',
+  '使用频率 30%': 'Usage Rate 30%',
+  '转化率 +20%': 'Conversion +20%',
+  '年销售额 +23%': 'Annual Sales +23%',
+  '4 大品牌': '4 Major Brands',
+  '🔬 Bad Case 复盘': '🔬 Bad Case Review',
+  '4 个典型案例': '4 Typical Cases',
+  // LearnFlow specifics
+  '怪兽 Agent 对话': 'Monster Agent Chat',
+  'AI 一键填充知识路径': 'AI One-Click Knowledge Path Filling',
+  '以北极星指标为牵引，按「学生 → 职场 → 留存 → 商业化」四阶段渐进迭代，每版本设核心成功指标闭环验证': 'North Star-driven, 4-phase progression: Student → Professional → Retention → Monetization',
+  '学生': 'Student',
+  '职场': 'Professional',
+  '留存': 'Retention',
+  '商业化': 'Monetization',
+  'MVP 上线，AI 技能树 + 怪兽 + 番茄钟 + Pro': 'MVP Launch: AI Skill Tree + Monsters + Pomodoro + Pro',
+  '北极星：月新注册 ≥300': 'North Star: Monthly New Signups ≥300',
+  '学习完成 ≥60% | 次日留存 ≥35%': 'Completion ≥60% | Day-2 Retention ≥35%',
+  '暑假专题 + 学习提醒 + 社区分享': 'Summer Topics + Reminders + Community Sharing',
+  '北极星：月新注册 ≥500': 'North Star: Monthly New Signups ≥500',
+  'AI 签到 + 知识卡片 + 职场技能树扩展': 'AI Check-in + Knowledge Cards + Professional Skill Tree',
+  '北极星：职场注册 ≥200': 'North Star: Professional Signups ≥200',
+  '召回 Push + 打卡体系 + 流失预警模型': 'Recall Push + Streak System + Churn Prediction',
+  '北极星：流失率 -20%': 'North Star: Churn -20%',
+  '付费转化优化 + 企业版 + 内容生态': 'Monetization + Enterprise Edition + Content Ecosystem',
+  '完整商业闭环': 'Full Business Loop Closed',
+  '模型选型与效果评测': 'Model Selection & Effectiveness Evaluation',
+  '评测范围：AI 填充功能（自定义领域）+ AI 对话功能（怪兽页面）。评测目标：确保 AI 功能效果稳定、可控、无风险': 'Scope: AI Fill (Custom Domains) + AI Chat (Monster Page). Goal: Stable, controllable, risk-free AI features',
+  '方案 A：Deepseek v4-flash': 'Plan A: Deepseek v4-flash',
+  '方案 B：Agnes-2.0-Flash': 'Plan B: Agnes-2.0-Flash',
+  '付费调用': 'Paid',
+  '免费': 'Free',
+  '付费': 'Paid',
+  '评测方法与指标制定': 'Evaluation Method & Metric Design',
+  '指标制定方法': 'Metric Design Approach',
+  '评测流程': 'Evaluation Process',
+  '核心监控维度': 'Key Monitoring Dimensions',
+  '响应时长、内容准确性、输出稳定性、OOC 率': 'Response Time, Content Accuracy, Output Stability, OOC Rate',
+  '更快': 'Faster',
+  '较快': 'Fast',
+  '良好': 'Good',
+  '更优': 'Better',
+  '稳定': 'Stable',
+  '更稳定': 'More Stable',
+  '较低': 'Lower',
+  '低': 'Low',
+  'AI 填充响应时长': 'AI Fill Response',
+  'AI 对话响应时长': 'AI Chat Response',
+  '内容准确性': 'Content Accuracy',
+  '输出稳定性': 'Output Stability',
+  'OOC 率（角色偏离）': 'OOC Rate',
+  '价格': 'Price',
+  '在线': 'Online',
+  '离线评测': 'Offline',
+  '在线评测': 'Online Eval',
+  '离线·日语': 'Offline · JP',
+  // CTA
+  'Let\'s build something great.': 'Let\'s build something great.',
+  'AI 产品经理 · 2027 届应届生 · 腾讯 / 趋动 / AI Lab 实习背景 · 随时入职': 'AI Product Manager · 2027 Graduate · Tencent/VirtAI/AI Lab · Available Now',
+  '📧 971117427@qq.com': '📧 971117427@qq.com',
+  '📞 19502203515': '📞 19502203515',
+  '求职方向：AI 产品经理': 'Role: AI Product Manager',
+  'HKU AI & Society M.Sc. | ECUST Public Admin Top 3%': 'HKU AI & Society M.Sc. | ECUST Public Admin Top 3%',
+  'He Rui': 'He Rui',
+  '何睿': 'He Rui',
+  // Star card STAR labels and common content
+  'S 情境': 'S Situation', 'T 任务': 'T Task', 'A 行动': 'A Action', 'R 结果': 'R Result',
+  '📊 数据指标体系': '📊 Metrics Dashboard',
+  '目标≥': 'Target ≥', '目标≤': 'Target ≤', '目标': 'Target',
+  '千人场景识别速度': '1K-User Recognition Speed',
+  '全场景平均响应': 'Avg Response Time',
+  '核心接口数量': 'Core API Count',
+  '录入场景覆盖': 'Enrollment Scenarios',
+  '兼容现有单掌用户': 'Backward Compatible',
+  '智能应答准确率': 'Response Accuracy',
+  '问题解决率': 'Resolution Rate',
+  '平均响应时延': 'Avg Latency',
+  '人工转接率': 'Escalation Rate',
+  '7×24 小时在线率': '7×24 Availability',
+  '咨询留资转化率': 'Lead Conversion',
+  '官网留资率提升': 'Website Lead Rate',
+  '用户满意度': 'User Satisfaction',
+  '评测话术覆盖': 'Test Cases Covered',
+  '基线': 'Baseline',
+  '滚动深度提升': 'Scroll Depth Increase',
+  '底部到达率': 'Bottom Reach Rate',
+  '交付周期缩短': 'Delivery Cycle Reduction',
+  '粉丝增长': 'Follower Growth',
+  '竞品分析覆盖': 'Competitor Coverage',
+  '认证等级设计': 'Certification Tiers',
+  '环境重建耗时': 'Rebuild Time',
+  '功能使用频率': 'Feature Usage Rate',
+  '首次项目时间': 'First Project Time',
+  '社区反馈分析量': 'Community Feedback Analyzed',
+  // Palm2.0 card content
+  'SaaS 平台限制单用户 ID 仅绑定单一手掌': 'SaaS platform restricted single-user to single-palm binding',
+  '与底层 PaaS 双掌识别算法能力严重脱节': 'creating a critical gap with PaaS dual-palm capability',
+  '80% 以上购买 PaaS 的客户无法完整使用双掌功能': '80%+ PaaS customers could not use dual-palm features',
+  '企业面临一人多户的数据管理难题': 'Enterprises faced multi-account data management issues',
+  '打通 PaaS 到 SaaS 的双掌识别全链路': 'Bridge the PaaS-to-SaaS dual-palm recognition pipeline',
+  '完成注册、核验、管理三大场景的技术升级与流程重构': 'Complete tech upgrade for registration, verification, and management',
+  '保障识别速度不降级': 'Ensure no recognition speed degradation',
+  '场景层：梳理全端流程，明确 3 类录入场景与冲突处理机制': 'Scenario: Mapped full-terminal flows, defined 3 enrollment scenarios and conflict handling',
+  '技术层：设计 5 大核心接口': 'Tech: Designed 5 core APIs (register/verify/delete/query/merge) with clear data structures',
+  '算法层：分场景定制检索策略': 'Algorithm: Custom retrieval strategies per scenario',
+  '千人以內本地小库识别，万人开放场景端云协同': 'Local DB for <1K users; edge-cloud for >10K open scenarios',
+  '千人封闭场景识别速度提升 60%': '60% faster recognition in closed 1K-user scenarios',
+  '万人开放场景延迟控制在 500ms 内': 'Latency <500ms in 10K-user open scenarios',
+  '全场景平均响应减少 0.15s': 'Avg response reduced by 0.15s across all scenarios',
+  '持续监控功能落地数据与边缘 case': 'Continuous monitoring of feature adoption and edge cases',
+  // Smart Customer Service card content
+  '海外刷掌支付面向全球用户': 'Overseas palm payment serves global users',
+  '时差导致咨询碎片化、高频问题重复、专业需求难应答': 'Time zones fragmented inquiries, high-frequency repeats, hard-to-answer expert questions',
+  '传统 FAQ 无法覆盖，人工客服成本高': 'Traditional FAQ insufficient, human support too costly',
+  '需要一个 7×24 精准应答的智能方案': 'Need a 24/7 accurate smart solution',
+  '从 0 搭建 RAG 检索增强生成 + Agent 智能调度双引擎架构': 'Built RAG + Agent dual-engine architecture from scratch',
+  '实现精准应答、复杂转接、线索留资三合一闭环': 'Achieved accurate answers, complex routing, and lead capture in one closed loop',
+  'RAG 知识库：整合全量技术文档+合规条款+合作政策+海外案例+FAQ': 'RAG KB: Integrated all tech docs, compliance, partnership policies, global cases, FAQs',
+  '完成文档切片、向量入库、语义检索配置，多粒度分块策略': 'Document chunking, vector indexing, semantic retrieval with multi-granularity strategy',
+  'Agent 调度：轻量 Agent 实现意图识别': 'Agent routing: Lightweight agent for intent detection (tech/partnership/product/complaint)',
+  '置信度': 'Confidence',
+  '前置澄清，识别为合作意向直接触发留资': 'pre-clarification; partnership intent triggers lead capture',
+  '评测闭环：离线评测 1000+ 真实话术': 'Eval loop: Offline testing of 1000+ real conversations',
+  '+ 在线复盘错误应答 + 人工抽检应答专业性': '+ online review of errors + manual spot checks for professionalism',
+  '三层验收：功能验收（全链路可用）+ 性能验收（核心指标达标）+ 业务验收（无合规/翻译错误）': '3-tier acceptance: Functional (full-chain working) + Performance (KPIs met) + Business (no compliance/translation issues)',
+  '智能应答准确率 ≥90%，问题解决率 ≥85%，平均响应时延 ≤1s': 'Accuracy ≥90%, resolution ≥85%, latency ≤1s',
+  '人工转接率 ≤15%，7×24 在线率 100%，咨询留资转化率 ≥12%，用户满意度 ≥4.8/5': 'Escalation ≤15%, 24/7 availability 100%, lead conversion ≥12%, satisfaction ≥4.8/5',
+  // Bad Cases in smart customer service
+  '🔬 Bad Case 复盘': '🔬 Bad Case Review',
+  '4 个典型案例': '4 Typical Cases',
+  '知识库缺失·无法回答': 'Missing KB · No Answer',
+  '日本合规进度未入库': 'Japan compliance progress not in KB',
+  '离线评测': 'Offline Eval',
+  '生成幻觉·捏造功能': 'Hallucination · Fabricated Feature',
+  'Apple Watch功能不存在': 'Apple Watch feature non-existent',
+  '在线评测': 'Online Eval',
+  '意图识别错误': 'Intent Misclassification',
+  '合作意向→技术支持': 'Partnership→Tech Support',
+  '多语言翻译不一致': 'i18n Inconsistency',
+  '日语术语混用·非标准': 'JP term mixing · non-standard',
+  '离线·日语': 'Offline · JP',
+  '问题现象': 'Issue',
+  '根因': 'Root Cause',
+  '方案': 'Solution',
+  '用户问：日本合规认证进度？→ 系统：抱歉，未找到相关信息。': 'User: "Japan compliance progress?" → System: "Sorry, info not found."',
+  '日本内部进度文档未上传，切片漏掉项目周报': 'Japan internal docs not uploaded; project weekly report chunk missed',
+  '补全知识库 + 待补充监控 + 部分知晓兜底引导留资': 'Complete KB + missing-content monitoring + partial-knowledge fallback with lead capture',
+  '问：Apple Watch上可用吗？→ 答：可以安装App，抬手支付。': 'Q: "Works on Apple Watch?" → A: "Yes, install app and pay." (feature not built)',
+  'Temperature 0.7 偏高，模型从iOS支持泛化编造了Apple Watch细节': 'Temperature 0.7 too high; model generalized from "iOS support" to fabricate Apple Watch details',
+  'Temperature→0.3 + 事实性校验层 + 补充反例知识': 'Temperature→0.3 + fact-check layer + negative example KB entries',
+  '印尼连锁店：想批量引入，如何洽谈？→ 系统答：请下载商家端App…': 'Indonesian chain: "How to partner?" → System: "Download merchant app..."',
+  '合作/商务类训练样本不足，批量引入洽谈未被关键词规则覆盖': 'Partnership training samples insufficient; "batch", "partner" not in keyword rules',
+  '扩充500+合作意图训练集 + 置信度': 'Expanded 500+ partnership training samples + confidence <0.8 pre-clarify + direct lead routing',
+  '前置反问 + 合作意图直接触发留资': 'Expanded 500+ partnership training samples + confidence <0.8 pre-clarify + direct lead routing',
+  '手のひら認証与パームプリント混用，误识率错译为非标准的誤識率': '"手のひら認証" and "パームプリント" mixed; "误识率" mistranslated to non-standard "誤識率"',
+  '通用神经翻译未注入行业术语表，不同文档译法未归一化': 'Generic NMT without industry glossary; inconsistent translations across documents',
+  '建立多语言术语表 + 术语强制替换 + Top 100 术语专家校对': 'Multi-language glossary + forced term replacement + Top-100 expert review',
+  // DeepLink card
+  '部门软硬自研产品缺乏开放生态': 'Dept. hardware/software products lacked open ecosystem',
+  '无合作伙伴认证体系与标准化接入流程': 'No partner certification system or standardized onboarding',
+  '官网滚动深度仅 40%，底部到达率仅 10%，技术文章人工交付周期长': 'Scroll depth only 40%, bottom reach 10%, manual article delivery slow',
+  '年度目标：可持续拓展合作企业': 'Annual goal: sustainable partner enterprise expansion',
+  '从 0 搭建开放生态体系': 'Build open ecosystem from 0 (tech adaptation + partner operations)',
+  '优化官网体验提升转化，建立自动化运营流程': 'Optimize website for conversion, automate operations',
+  '对标腾讯云、阿里云、Google 合作体系': 'Benchmarked against Tencent Cloud, Alibaba Cloud, Google partnerships',
+  '设计三级认证体系（先锋/优选/注册），配套技术评级与对应权益': 'Designed 3-tier certification (Pioneer/Preferred/Registered) with tech ratings and benefits',
+  '竞品分析 5 家 + A/B 测试 + 四维模型（动机-路径-引导-保障）': 'Analyzed 5 competitors + A/B testing + 4D model (Motivation-Path-Guidance-Assurance)',
+  '分段式内容设计与流失拐点定位': 'Segmented content design and churn point identification',
+  'Dify 多 Agent 系统，实现热点追踪、文章审查、数据复盘': 'Dify multi-agent system for trend tracking, article review, data analysis',
+  '成功引入软硬件厂商合作，超额完成年度伙伴拉新': 'Successfully onboarded hardware/software partners, exceeded annual recruitment',
+  '官网滚动深度从 40%→67%，底部到达率 10%→35%': 'Scroll depth 40%→67%, bottom reach 10%→35%',
+  '文章交付周期缩短 57%，粉丝上涨 1000+': 'Article delivery -57%, followers +1000',
+  // 趋动云 card
+  'AI 开发训练平台趋动云面临新用户流失率高问题': 'VirtAI Cloud AI dev platform faced high new-user churn',
+  '社区 200+ 反馈显示：环境重建耗时长、训练中断需重来': '200+ community feedback: slow env rebuild, training interruptions',
+  '新手上手门槛高，导航动线不合理': 'High onboarding friction, poor navigation flow',
+  '优化操作台用户流程以降低上手时间': 'Optimize console UX to reduce onboarding time',
+  '设计商业化功能降低环境重建成本，提升用户留存与满意度': 'Design commercial features to reduce rebuild cost, improve retention',
+  '需求分析：分析 200+ 社区反馈与 B 端需求，归类后制定优先级': 'Analyzed 200+ community feedback + B2B needs, prioritized by impact',
+  '功能设计：主导临时镜像支持模型训练断点续训，灰度上线验证': 'Led "Temp Image" feature for training checkpoint resume, gradual rollout',
+  '流程优化：亲自跑通猫狗模型训练/部署全流程，拆解痛点，重构导航栏': 'Personally ran full cat/dog model train/deploy pipeline, identified pain points, redesigned nav',
+  '临时镜像使重建耗时降低 40%，使用频率达 30%': 'Temp Image reduced rebuild time 40%, adoption 30%',
+  '导航栏优化后新用户首次项目时间缩短 25%，整体满意度提升 20%': 'Nav redesign: first project time -25%, satisfaction +20%',
+  // 海外官网 card
+  '刷掌支付海外官网项目搁置 3 个月': 'Overseas palm payment website stalled for 3 months',
+  '初版仅为信息展示页': 'V1 was just an info page',
+  '目标覆盖海外企业决策者、技术/运营人员、渠道合作伙伴三类用户': 'Targeting 3 user types: decision makers, tech/ops, channel partners',
+  '但用户路径模糊、缺少分层转化机制，难以支撑海外线索获取': 'But unclear user paths, no tiered conversion, unable to support lead gen',
+  '1 个月内重启并上线国际化官网': 'Restarted and launched international website in 1 month',
+  '实现品牌塑造 + 线索转化 + 生态合作三大目标': 'Achieved branding + lead conversion + ecosystem partnership',
+  '跨团队协同推进（技术研发、品牌市场、海外业务、销售渠道）': 'Cross-team coordination (R&D, Brand, Overseas Business, Sales)',
+  '建立定期同步与分工协作机制': 'Established regular sync and division-of-labor mechanism',
+  '分层用户转化：决策者→信任背书与案例展示': 'Tiered conversion: Decision-makers → trust signals and case studies',
+  '技术人员→技术方案与功能详解': 'Tech staff → technical specs and feature details',
+  '渠道伙伴→生态价值与合作政策': 'Channel partners → ecosystem value and partnership policies',
+  '分层 CTA 体系：按用户意向度设计浅（内容下载）、中（Demo 预约）、深（商务咨询）三级转化钩子': '3-tier CTA: Light (content download), Medium (demo booking), Deep (business inquiry)',
+  '五阶段迭代：基础建设→信任深化→开发者赋能→生态完善→体验焕新': '5-phase iteration: Foundation → Trust → Developer → Ecosystem → Refresh',
+  '1 个月内从搁置到上线，分层留资体系使整体留资率提升 14%': 'Launched in 1 month; tiered lead system boosted overall lead rate 14%',
+  '官网成为海外线索获取核心引擎，支撑智能客服 RAG+Agent 模块的部署与评测闭环': 'Website became core overseas lead engine, supported RAG+Agent deployment',
+  // 多品牌 card
+  '养乐多、好侍、NITORI、苏菲等快消品牌线下地推转化效率低': 'Yakult, House, NITORI, Sofy FMCG brands had low offline conversion',
+  '线上线下数据未打通，全链路转化流失无记录': 'Online-offline data siloed; no full-funnel churn tracking',
+  '首次触达后用户流失严重': 'Severe user drop-off after first touch',
+  '赋能多品牌数字化运营，降低销售人员流失率，提升线上线下整体成交量': 'Enable multi-brand digital ops, reduce sales churn, boost overall conversion',
+  '盘活存量复购、拓展新增用户，建立可复用的标准化流程': 'Reactivate existing users, acquire new ones, build reusable SOP',
+  '问题定位：电话调研 2 个地区、10 位一线人员，识别核心痛点': 'Discovery: Phone surveyed 2 regions, 10 frontline staff, identified core pain points',
+  '策略设计：梳理历史销售数据提炼用户画像': 'Strategy: Analyzed historical sales data to build user personas (age ~36, summer purchases for family)',
+  '搭建话术库与促销活动': 'Built script library and targeted promotions',
+  '体系搭建：企微数字化集客链路 + 用户标签体系 + 关键行为追踪点 + 分层数据监控': 'System: WeCom digital acquisition + user tagging + key behavior tracking + tiered monitoring',
+  '目标人群转化率较纯线下模式提升 20%': 'Target conversion +20% vs. pure offline model',
+  '年销售额提升 23%，月销售额提升 17%': 'Annual sales +23%, monthly +17%',
+  '单月总成交额突破 12W+': 'Monthly GMV exceeded 120K+',
+  '沉淀可复用的快消品地推企微运营指南': 'Created reusable FMCG field sales WeCom operations playbook',
+  // LearnFlow expanded content
+  '用户痛点': 'User Pain Points',
+  '学习动力衰减快 — 70% 用户首周后打开率骤降，缺乏持续激励和游戏化反馈，难以形成正向学习循环': 'Motivation decay — 70% users drop off after week 1; lack of gamified feedback and sustained incentives',
+  '学习路径不清晰 — 海量课程无从下手，缺乏个性化引导。用户花 40% 时间在选择而非学习': 'Unclear path — Too many courses, no personalized guidance. 40% time wasted choosing, not learning',
+  '碎片化难专注 — 抖音/微信持续争夺注意力，用户平均单次学习仅 12 分钟即被打断': 'Fragmented focus — TikTok/WeChat constant attention drain; avg session only 12 min before interruption',
+  '采用 Function Calling 架构：用户输入 → LLM 判断意图 → 返回结构化 tool_calls → 服务端解析执行': 'Function Calling architecture: User input → LLM intent detection → structured tool_calls → server execution (DB/Service) → result back to LLM → natural language reply',
+  '10 个工具（创建领域/管理任务/写笔记/查状态等），System Prompt 注入实时上下文': '10 tools (create domain/manage tasks/write notes/check status), System Prompt with real-time context',
+  '前端根据 toolResults 同步更新本地 UI': 'Frontend syncs local UI based on toolResults',
+  'AI 一键填充知识路径': 'AI One-Click Knowledge Path Fill',
+  '用户输入学习主题后，LLM 按预设 JSON Schema 自动生成结构化技能树': 'User inputs topic → LLM auto-generates structured skill tree via preset JSON Schema',
+  '领域 → 阶段（大标题）→ 学习节点（含名称/描述/资源链接）': 'Domain → Stage → Learning Nodes (name/description/resource links)',
+  '前端以可编辑表单展示生成结果，用户可增删改任意节点': 'Editable form displays results; users can add/delete/modify any node',
+  '生成支持手动 + AI 混合模式——手动创建框架后一键调用 AI 补全剩余内容': 'Supports manual + AI hybrid mode — build framework manually, then one-click AI fill',
+  // Architecture diagram
+  '🏗️ 系统架构': '🏗️ System Architecture',
+  '用户层 · 多语言 / 多时区 / 碎片化咨询': 'User Layer · Multilingual / Multi-timezone / Fragmented Inquiries',
+  '接入层 · 7×24h 在线 · Web / App / IM': 'Access Layer · 24/7 Online · Web / App / IM',
+  '意图识别层 · 语义向量优先 + 模糊引导 + 记忆兜底': 'Intent Layer · Semantic Vector Priority + Fuzzy Guidance + Memory Fallback',
+  '调度层 · 轻量级 Agent': 'Dispatch Layer · Lightweight Agent',
+  '标准化问答 → RAG 检索 + 生成': 'Standard Q&A → RAG Retrieval + Generation',
+  '复杂多轮 → 上下文记忆 + 逐步引导': 'Complex Multi-turn → Context Memory + Step Guidance',
+  '无法解决 → 人工转接 / 留资联动': 'Unresolvable → Human Handoff / Lead Capture',
+  '知识层 · 向量数据库 + 长期记忆 + 10 轮短期记忆': 'Knowledge Layer · Vector DB + Long-term Memory + 10-turn Short Memory',
+  '输出层 · 安全过滤 + 多语言适配 + 合规校验': 'Output Layer · Safety Filter + i18n Adaptation + Compliance Check',
+  '评测闭环 · 离线评测 + 在线灰度 + 人工抽检': 'Eval Loop · Offline Testing + Online Canary + Manual Spot Check',
+  // AI Lab Data Agent
+  '新媒体运营数据监控与分析 Agent': 'New Media Ops Data Monitoring & Analysis Agent',
+  '上海 AI 实验室 · AI 产品运营 · Agent 搭建方向': 'Shanghai AI Lab · AI Product Ops · Agent Dev',
+  'Dify Agent 搭建': 'Dify Agent Built', '数据库 API 对接': 'DB API Integration', 'Nokia 前端搭建': 'Nokia Frontend',
+  'AI Lab 新媒体运营团队缺乏统一的数据监控与分析工具': 'AI Lab new media team lacked unified data monitoring tools',
+  '运营数据分散在公司内部数据库中，人工查询和分析效率低下': 'Ops data scattered in internal DB; inefficient manual analysis',
+  '需要一套自动化 Agent 实现数据看板监控与智能分析': 'Needed automated Agent for dashboard monitoring and analysis',
+  '基于真实业务需求，从 0 搭建数据监控与分析 Agent': 'Built data monitoring Agent from scratch for real business needs',
+  '打通公司离线数据库 API，实现自动数据拉取、清洗、分析': 'Connected offline DB API for automated pull, clean, analysis',
+  '并通过前端看板展示，整体提效运营数据分析流程': 'Frontend dashboard for visualization; improved ops analysis efficiency',
+  '接入公司内部离线数据库 API，完成数据源配置': 'Integrated internal offline DB API for data source configuration',
+  '通过 Dify 搭建整体工作流（数据拉取 → 清洗 → 分析 → 输出）+ 外挂业务知识库': 'Built Dify workflow (pull → clean → analyze → output) + business KB',
+  '上下文处理包括段落划分、去除冗余信息和噪音': 'Context: paragraph segmentation, redundancy removal, noise reduction',
+  '美团 Nokia + Dify 搭建前端看板，实现数据可视化展示与 Agent 交互入口': 'Meituan Nokia + Dify frontend dashboard with visualization and Agent UI',
+  '搭建完成数据监控与分析 Agent，打通公司内部数据库到前端看板的完整链路': 'Completed Agent; full pipeline from internal DB to frontend dashboard',
+  '实现运营数据自动化分析，显著提效新媒体运营团队的数据工作': 'Automated ops analysis, significantly improved new media team efficiency',
+};
+
+function toggleLang() {
+  if (!textNodesCache) captureTextNodes();
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+  document.body.classList.toggle('lang-en', currentLang === 'en');
+  const btn = document.getElementById('langSwitch');
+  const label = btn.querySelector('.label');
+  label.textContent = currentLang === 'en' ? 'EN' : '中';
+  
+  // Restore all original text first
+  textNodesCache.forEach(item => { try { item.node.textContent = item.text; } catch(e){} });
+  
+  if (currentLang === 'en') {
+    // Build sorted list of [zh, en] pairs by length (longest first for greedy matching)
+    const pairs = Object.entries(translations).sort((a, b) => b[0].length - a[0].length);
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const p = node.parentElement;
+      if (!p || p.closest('script,style,noscript')) continue;
+      let text = node.textContent;
+      let changed = false;
+      for (const [zh, en] of pairs) {
+        if (text.includes(zh)) {
+          text = text.split(zh).join(en);
+          changed = true;
+        }
+      }
+      if (changed) node.textContent = text;
+    }
+  }
+  
+  // Also handle HTML-containing bilingual elements
+  document.querySelectorAll('[data-zh]').forEach(el => {
+    try {
+      el.innerHTML = currentLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-zh');
+    } catch(e){}
+  });
+}
+/* ========== Section Collapse ========== */
+function toggleSection(header) {
+  header.classList.toggle('collapsed');
+  const body = header.nextElementSibling;
+  if (body && body.classList.contains('section-body')) {
+    body.classList.toggle('collapsed');
+  }
+}
+</script>
+</body>
+</html>
